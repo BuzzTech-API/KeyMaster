@@ -1,11 +1,20 @@
+import { FaEye, FaLock } from "react-icons/fa";
 import PasswordCard from "../components/passwordCard";
 
 const SavedPasswords: React.FC = () => {
 
   // Sample password data
   const passwords = [
-    { id: 1, name: 'Example Password', email: 'user@example.com' },
-    { id: 2, name: 'Another Password', email: 'another@example.com' },
+    { id: 1, name: 'Example Password', email: 'user@example.com', icon: <FaEye size={24} /> },
+    { id: 2, name: 'Another Password', email: 'another@example.com', icon: <FaLock size={24} /> },
+    { id: 1, name: 'Example Password', email: 'user@example.com', icon: <FaEye size={24} /> },
+    { id: 2, name: 'Another Password', email: 'another@example.com', icon: <FaLock size={24} /> },
+    { id: 1, name: 'Example Password', email: 'user@example.com', icon: <FaEye size={24} /> },
+    { id: 2, name: 'Another Password', email: 'another@example.com', icon: <FaLock size={24} /> },
+    { id: 1, name: 'Example Password', email: 'user@example.com', icon: <FaEye size={24} /> },
+    { id: 2, name: 'Another Password', email: 'another@example.com', icon: <FaLock size={24} /> },
+    { id: 1, name: 'Example Password', email: 'user@example.com', icon: <FaEye size={24} /> },
+    { id: 2, name: 'Another Password', email: 'another@example.com', icon: <FaLock size={24} /> },
   ];
 
   const handleCardClick = (id: number) => {
@@ -14,12 +23,13 @@ const SavedPasswords: React.FC = () => {
   };
 
   return (
-    <div className="ml-64 flex-1 p-4 bg-gray-100">
+    <div className="ml-64 flex-1 p-4 bg-blue-950 overflow-y-auto h-full scrollbar">
       {passwords.map((password) => (
         <PasswordCard
           key={password.id}
           passwordName={password.name}
           email={password.email}
+          icon={password.icon}
           onClick={() => handleCardClick(password.id)}
         />
       ))}
