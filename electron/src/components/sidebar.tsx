@@ -2,7 +2,7 @@
 
 const Sidebar: React.FC<{ setActiveScreen: (screen: string) => void }> = ({ setActiveScreen }) => {
     return (
-      <div className="z-10 fixed w-64 bg-gray-800 text-white h-screen flex flex-col">
+      <div className="z-10 fixed w-56 bg-gray-800 text-white h-screen flex flex-col">
         <button className="p-4 hover:bg-gray-700" onClick={() => setActiveScreen('home')}>
           Home
         </button>
@@ -10,7 +10,7 @@ const Sidebar: React.FC<{ setActiveScreen: (screen: string) => void }> = ({ setA
           Saved Passwords
         </button>
 
-        <div className="mt-auto">
+         <div className="mt-auto">
         <button
           className="p-4 hover:bg-gray-700 w-full"
           onClick={() => {
