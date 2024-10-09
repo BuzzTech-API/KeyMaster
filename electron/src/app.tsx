@@ -9,7 +9,7 @@ import Login from './pages/login';
 
 const App = () => {
 
-  const [activeScreen, setActiveScreen] = useState('savedPasswords');
+  const [activeScreen, setActiveScreen] = useState('login');
 
   const handleLoginSuccess = () => {
     // Change the active screen to 'home' after login
