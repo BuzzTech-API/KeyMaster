@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 
+interface LoginProps {
+  onLoginSuccess: () => void; // Callback prop
+}
+
 //Telinha a lá GPT
-const Login = () => {
+const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -9,6 +13,8 @@ const Login = () => {
     e.preventDefault();
     // Logic for handling login goes here
     console.log('Email:', email, 'Password:', password);
+
+    onLoginSuccess();
   };
 
   return (

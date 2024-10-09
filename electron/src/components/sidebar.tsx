@@ -9,6 +9,20 @@ const Sidebar: React.FC<{ setActiveScreen: (screen: string) => void }> = ({ setA
         <button className="p-4 hover:bg-gray-700" onClick={() => setActiveScreen('savedPasswords')}>
           Saved Passwords
         </button>
+
+        <div className="mt-auto">
+        <button
+          className="p-4 hover:bg-gray-700 w-full"
+          onClick={() => {
+            // Handle logout logic here
+            console.log('Logging out...');
+            // For example, you can reset the active screen to 'login':
+            setActiveScreen('login');
+          }}
+        >
+          Logout
+        </button>
+      </div>
       </div>
     );
   };

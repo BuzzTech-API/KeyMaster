@@ -8,22 +8,36 @@ import Login from './pages/login';
 
 
 const App = () => {
-  
-  const [activeScreen, setActiveScreen] = useState('login');
-  
+
+  const [activeScreen, setActiveScreen] = useState('home');
+
+  const handleLoginSuccess = () => {
+    // Change the active screen to 'home' after login
+    setActiveScreen('home');
+  };
+
   return (
     <div className="flex h-screen">
-      <Login />
-      <Sidebar setActiveScreen={setActiveScreen} />
-      {activeScreen === 'home' && <Home />}
-      {activeScreen === 'savedPasswords' && <SavedPasswords />}
+      {activeScreen === 'login' && <Login onLoginSuccess={handleLoginSuccess} />}
+      {activeScreen === 'home' && (
+        <>
+          <Sidebar setActiveScreen={setActiveScreen} />
+          <Home />
+        </>
+      )}
+      {activeScreen === 'savedPasswords' && (
+        <>
+          <Sidebar setActiveScreen={setActiveScreen} />
+          <SavedPasswords />
+        </>
+      )}
     </div>
   );
 }
 
 function render() {
   const root = ReactDOM.createRoot(document.getElementById("app"));
-  root.render(<App/>);
+  root.render(<App />);
 }
 
 render();
