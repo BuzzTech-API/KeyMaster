@@ -17,9 +17,9 @@ import { TermOfCondition } from './term-of-condition/entities/term-of-condition.
       type: 'postgres', // or your database type
       host: 'localhost',
       port: 5432,
-      username: '',
-      password: '',
-      database: '',
+      username: 'admin',
+      password: 'admin',
+      database: 'keymaster',
       entities: [User, Password, Consent, TermOfCondition],
       synchronize: true,
     }),

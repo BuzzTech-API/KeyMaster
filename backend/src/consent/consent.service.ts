@@ -1,26 +1,47 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { CreateConsentDto } from './dto/create-consent.dto';
 import { UpdateConsentDto } from './dto/update-consent.dto';
+import { Consent } from './entities/consent.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ConsentService {
-  create(createConsentDto: CreateConsentDto) {
-    return 'This action adds a new consent';
+  constructor(
+    @InjectRepository(Consent)
+    private readonly consentRepository: Repository<Consent>
+  ){}
+
+  async create(createConsentDto:CreateConsentDto): Promise<Consent> {
+    const consentData = await this.consentRepository.save(createConsentDto)
+    return this.consentRepository.save(consentData)
   }
 
-  findAll() {
-    return `This action returns all consent`;
+  async findAll(): Promise<Consent[]> {
+    return await this.consentRepository.find()
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} consent`;
+  async findOne(id: number): Promise<Consent> {
+    const consentData = await this.consentRepository.findOneBy({id})
+    if (!consentData) {
+      throw new HttpException(
+        'Consent not found!', 404
+      )
+    }
+    return consentData
   }
 
-  update(id: number, updateConsentDto: UpdateConsentDto) {
-    return `This action updates a #${id} consent`;
+  async update(id: number, updateConsentDto: UpdateConsentDto): Promise<Consent> {
+    const consent = await this.findOne(id)
+    const consentData = this.consentRepository.merge(
+      consent,
+      updateConsentDto
+    )
+    return await this.consentRepository.save(consentData)
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} consent`;
+  async remove(id: number): Promise<Consent> {
+    const consent = await this.findOne(id)
+    return await this.consentRepository.remove(consent)
   }
 }

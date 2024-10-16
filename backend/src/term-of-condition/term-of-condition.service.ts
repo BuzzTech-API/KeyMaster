@@ -1,26 +1,48 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { CreateTermOfConditionDto } from './dto/create-term-of-condition.dto';
 import { UpdateTermOfConditionDto } from './dto/update-term-of-condition.dto';
+import { TermOfCondition } from './entities/term-of-condition.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+
 
 @Injectable()
 export class TermOfConditionService {
-  create(createTermOfConditionDto: CreateTermOfConditionDto) {
-    return 'This action adds a new termOfCondition';
+  constructor(
+    @InjectRepository(TermOfCondition)
+    private readonly termOfConditionRepository: Repository<TermOfCondition>
+  ){}
+
+  async create(createTermOfConditionDto: CreateTermOfConditionDto): Promise<TermOfCondition> {
+    const termOfConditionData = await this.termOfConditionRepository.save(createTermOfConditionDto)
+    return this.termOfConditionRepository.save(termOfConditionData)
   }
 
-  findAll() {
-    return `This action returns all termOfCondition`;
+  async findAll(): Promise<TermOfCondition[]> {
+    return await this.termOfConditionRepository.find()
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} termOfCondition`;
+  async findOne(id: number): Promise<TermOfCondition> {
+    const termOfConditionData = await this.termOfConditionRepository.findOneBy({id})
+    if (!termOfConditionData) {
+      throw new HttpException(
+        'Term Of Condition not found!', 404
+      )
+    }
+    return termOfConditionData
   }
 
-  update(id: number, updateTermOfConditionDto: UpdateTermOfConditionDto) {
-    return `This action updates a #${id} termOfCondition`;
+  async update(id: number, updateTermOfConditionDto: UpdateTermOfConditionDto): Promise<TermOfCondition> {
+    const termOfCondition = await this.findOne(id)
+    const termOfConditionData = this.termOfConditionRepository.merge(
+      termOfCondition,
+      updateTermOfConditionDto
+    )
+    return await this.termOfConditionRepository.save(termOfConditionData)
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} termOfCondition`;
+  async remove(id: number): Promise<TermOfCondition> {
+    const termOfCondition = await this.findOne(id)
+    return await this.termOfConditionRepository.remove(termOfCondition)
   }
 }
