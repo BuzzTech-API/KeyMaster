@@ -4,18 +4,26 @@ import { UpdateUserDto } from '../dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entities/user.entity';
 import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
+import { EncryptionService } from '../encryption/encryption.service';
 
 @Injectable()
 export class UserService {
 
   constructor(
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>
+    private readonly userRepository: Repository<User>,
+    // Ivan Germano: Aqui estamos injetando nosso serviço de criptografia em UserService.
+    private readonly encryptionService: EncryptionService 
   ){}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const userData = await this.userRepository.save(createUserDto)
-    return this.userRepository.save(userData)
+    // Ivan Germano: Aqui definimos a variavel 'hashedPassword para usar o serviço de criptografia com a função 'hashedPassword'.
+    const hashedPassword = await this.encryptionService.hashPassword(createUserDto.password);
+    createUserDto.password = hashedPassword;
+
+    const userData = await this.userRepository.save(createUserDto);
+    return userData;
   }
 
   async findAll(): Promise<User[]> {
@@ -44,5 +52,21 @@ export class UserService {
   async remove(id: number): Promise<User> {
     const user = await this.findOne(id)
     return await this.userRepository.remove(user)
+  }
+
+  // Ivan Germano: Função de login para verificar as credenciais do usuário
+  async login(username: string, password: string): Promise<User> {
+  const user = await this.userRepository.findOne({ where: { username } });
+
+  if (!user) {
+    throw new HttpException('Invalid credentials!', 401);
+  }
+
+  const isPasswordValid = await this.encryptionService.comparePasswords(password, user.password);
+  if (!isPasswordValid) {
+    throw new HttpException('Invalid credentials!', 401);
+  }
+
+  return user;
   }
 }
