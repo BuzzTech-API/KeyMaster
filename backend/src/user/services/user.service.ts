@@ -4,8 +4,7 @@ import { UpdateUserDto } from '../dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entities/user.entity';
 import { Repository } from 'typeorm';
-import * as bcrypt from 'bcrypt';
-import { EncryptionService } from '../encryption/encryption.service';
+import { EncryptionService } from './encryption.service';
 
 @Injectable()
 export class UserService {
@@ -55,8 +54,8 @@ export class UserService {
   }
 
   // Ivan Germano: Função de login para verificar as credenciais do usuário
-  async login(username: string, password: string): Promise<User> {
-  const user = await this.userRepository.findOne({ where: { username } });
+  async login(name: string, password: string): Promise<User> {
+  const user = await this.userRepository.findOne({ where: { name } });
 
   if (!user) {
     throw new HttpException('Invalid credentials!', 401);
