@@ -1,6 +1,7 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
+import { LoginUserDto } from '../dto/login-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entities/user.entity';
 import { Repository } from 'typeorm';
@@ -54,18 +55,26 @@ export class UserService {
   }
 
   // Ivan Germano: Função de login para verificar as credenciais do usuário
-  async login(name: string, password: string): Promise<User> {
-  const user = await this.userRepository.findOne({ where: { name } });
+  async login(loginUserDto: LoginUserDto): Promise<User> {
+    const { email, password } = loginUserDto;
 
-  if (!user) {
-    throw new HttpException('Invalid credentials!', 401);
-  }
+    // Ivan Germano: Aqui verifica se o email digitado existe no banco de dados.
+    const user = await this.userRepository.findOne({ where: { email } });
 
-  const isPasswordValid = await this.encryptionService.comparePasswords(password, user.password);
-  if (!isPasswordValid) {
-    throw new HttpException('Invalid credentials!', 401);
-  }
+    if (!user) {
+      console.log("Email INCORRETO ou não existe!");
+      throw new HttpException('Email INCORRETO ou não existe!', 401);
+    }
 
-  return user;
+    // Ivan Germano: Aqui verifica se a senha corresponde a criptografia.
+    const isPasswordValid = await this.encryptionService.comparePasswords(password, user.password);
+    if (!isPasswordValid) {
+      console.log("Senha INCORRETA!");
+      throw new HttpException('Senha INCORRETA!', 401);
+    }
+    // Ivan Germano: Retorna o usuário em caso de sucesso
+    console.log("\nUsuário Logado com Sucesso: ")
+    console.log(user)
+    return user; 
   }
 }
