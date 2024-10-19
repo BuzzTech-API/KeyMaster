@@ -59,6 +59,7 @@ export class UserService {
     const { email, password } = loginUserDto;
 
     // Ivan Germano: Aqui verifica se o email digitado existe no banco de dados.
+    console.log('Procurando usuário com email:', email); // Verificar busca de usuário
     const user = await this.userRepository.findOne({ where: { email } });
 
     if (!user) {
@@ -68,12 +69,13 @@ export class UserService {
 
     // Ivan Germano: Aqui verifica se a senha corresponde a criptografia.
     const isPasswordValid = await this.encryptionService.comparePasswords(password, user.password);
+    console.log('Senha válida?', isPasswordValid); // Verificar validação de senha
     if (!isPasswordValid) {
       console.log("Senha INCORRETA!");
       throw new HttpException('Senha INCORRETA!', 401);
     }
     // Ivan Germano: Retorna o usuário em caso de sucesso
-    console.log("\nUsuário Logado com Sucesso: ")
+    console.log('Login bem-sucedido para usuário:', user.email);
     console.log(user)
     return user; 
   }
