@@ -1,20 +1,29 @@
 import React, { useState } from 'react';
+import { login } from '../api/auth';
 
 interface LoginProps {
   onLoginSuccess: () => void; // Callback prop
 }
 
-//Telinha a lá GPT
+
 const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Logic for handling login goes here
-    console.log('Email:', email, 'Password:', password);
+    // Ivan Germano: Aqui vamos usar a função Fetch chamada 'login' para enviar o email e senha ao backend, 
+    // preferi separar para deixar mais limpo o código.
+    console.log('Enviando dados para login:', { email, password });
+    const result = await login(email, password); // Usando a função de login da API
+    console.log('Resultado do login:', result);
 
-    onLoginSuccess();
+    if (result.success) {
+      onLoginSuccess();
+    } else {
+      setErrorMessage(result.message || 'Login falhou!');
+    }
   };
 
   return (
@@ -57,7 +66,11 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             Login
           </button>
         </form>
-
+        {errorMessage && (
+          <div className="mt-4 text-red-500 text-center">
+            {errorMessage}
+          </div>
+        )}
         {/* Option to Register */}
         <p className="text-gray-400 mt-6 text-center">
           Don’t have an account? <a href="#" className="text-blue-500 hover:underline">Sign up</a>

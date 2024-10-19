@@ -8,6 +8,10 @@ export class User {
     @PrimaryGeneratedColumn()
     id: number;
 
+    // Ivan Germano: Criei esse novo campo booleano para sabermos se o usuário é um adm ou não.
+    @Column()
+    isSuperUser: boolean;
+
     @Column()
     email: string;
 
