@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { login } from '../api/auth';
+import Checkbox from '../components/checkbox';
+import Modal from '../components/modal';
 
 interface Signpprops {
   setActiveScreen: React.Dispatch<React.SetStateAction<string>>; // Callback prop
@@ -17,7 +19,7 @@ const Signup: React.FC<Signpprops> = ({ }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // NOTE: Fazer função de fetch para cadastro do usuário
-    
+
   };
 
   return (
@@ -37,7 +39,7 @@ const Signup: React.FC<Signpprops> = ({ }) => {
               maxLength={80}
               onChange={(e) => setSignupData({
                 ...signupData,
-                name:e.target.value
+                name: e.target.value
               })}
               required
             />
@@ -53,7 +55,7 @@ const Signup: React.FC<Signpprops> = ({ }) => {
               value={signupData.email}
               onChange={(e) => setSignupData({
                 ...signupData,
-                email:e.target.value
+                email: e.target.value
               })}
               maxLength={120}
               required
@@ -71,7 +73,7 @@ const Signup: React.FC<Signpprops> = ({ }) => {
               maxLength={60}
               onChange={(e) => setSignupData({
                 ...signupData,
-                password:e.target.value
+                password: e.target.value
               })}
               required
             />
