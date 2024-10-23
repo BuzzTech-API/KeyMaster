@@ -16,7 +16,6 @@ export default function TermsAndCondition({isOpen, setIsOpen, pdfLink}:props) {
       <Modal isOpen={isOpen} title="Termos e Condições" onClose={onClose}>
         <iframe src={pdfLink} width={400} height={300}></iframe>
       </Modal>
-
     </div>
   )
 }
