@@ -4,6 +4,7 @@ import Home from './pages/home';
 import SavedPasswords from './pages/savedPasswords';
 import Sidebar from './components/sidebar';
 import Login from './pages/login';
+import Signup from './pages/singup';
 
 
 
@@ -18,7 +19,8 @@ const App = () => {
 
   return (
     <div className="flex h-screen">
-      {activeScreen === 'login' && <Login onLoginSuccess={handleLoginSuccess} />}
+      {activeScreen === 'login' && <Login setActiveScreen={setActiveScreen} />}
+      {activeScreen === 'signup' && <Signup setActiveScreen={setActiveScreen} />}
       {activeScreen === 'home' && (
         <>
           <Sidebar setActiveScreen={setActiveScreen} />
