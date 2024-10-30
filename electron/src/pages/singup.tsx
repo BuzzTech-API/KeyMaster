@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { login } from '../api/auth';
 import Checkbox from '../components/checkbox';
 import Modal from '../components/modal';
+import TermsAndCondition from '../components/termsAndCondition';
+import { BrowserWindow } from 'electron';
 
 interface Signpprops {
   setActiveScreen: React.Dispatch<React.SetStateAction<string>>; // Callback prop
@@ -15,6 +17,7 @@ const Signup: React.FC<Signpprops> = ({ }) => {
     password: ''
   })
   const [errorMessage, setErrorMessage] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,7 +81,12 @@ const Signup: React.FC<Signpprops> = ({ }) => {
               required
             />
           </div>
+              <Checkbox checked={false} onChange={function (): void {
 
+          } } >
+<span>Você aceita os <span onClick={()=>setIsOpen(true)}>termos e condições</span></span>
+          </Checkbox>
+<TermsAndCondition isOpen={isOpen} setIsOpen={setIsOpen} />
           {/* Submit Button */}
           <button
             type="submit"
