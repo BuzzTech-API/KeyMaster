@@ -10,6 +10,8 @@ import { Consent } from './consent/entities/consent.entity';
 import { Password } from './password/entities/password.entity';
 import { User } from './user/entities/user.entity';
 import { TermOfCondition } from './term-of-condition/entities/term-of-condition.entity';
+import { SessionModule } from './session/session.module';
+import { Session } from './session/entities/session.entity';
 
 @Module({
   imports: [
@@ -20,12 +22,13 @@ import { TermOfCondition } from './term-of-condition/entities/term-of-condition.
       username: 'admin',
       password: 'admin',
       database: 'keymaster',
-      entities: [User, Password, Consent, TermOfCondition],
+      entities: [User, Password, Consent, TermOfCondition, Session],
       synchronize: true,
     }),
     UserModule,
     PasswordModule,
     ConsentModule,
+    SessionModule,
     TermOfConditionModule],
   controllers: [AppController],
   providers: [AppService],
