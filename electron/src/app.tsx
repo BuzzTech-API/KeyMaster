@@ -12,12 +12,7 @@ const App = () => {
 
   const [activeScreen, setActiveScreen] = useState('login');
 
-  const handleLoginSuccess = () => {
-    // Change the active screen to 'home' after login
-    setActiveScreen('home');
-  };
-
-  return (
+   return (
     <div className="flex h-screen">
       {activeScreen === 'login' && <Login setActiveScreen={setActiveScreen} />}
       {activeScreen === 'signup' && <Signup setActiveScreen={setActiveScreen} />}

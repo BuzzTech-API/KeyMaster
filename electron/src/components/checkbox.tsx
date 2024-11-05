@@ -4,13 +4,15 @@ interface CheckboxProps {
   checked: boolean;
   onChange: (checked: boolean) => void;
   children: React.ReactNode;
+  required?: boolean
 }
 
-const Checkbox: React.FC<CheckboxProps> = ({  checked, onChange,children }) => {
+const Checkbox: React.FC<CheckboxProps> = ({ checked, onChange, children, required = false }) => {
   return (
     <div className="flex items-center">
       <input
         type="checkbox"
+        required={required}
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
         className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 transition duration-300"
