@@ -15,10 +15,10 @@ import { TermOfCondition } from './term-of-condition/entities/term-of-condition.
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres', // or your database type
-      host: 'localhost',
+      host: 'db',
       port: 5432,
-      username: 'admin',
-      password: 'admin',
+      username: 'postgres',
+      password: 'Senha123#',
       database: 'keymaster',
       entities: [User, Password, Consent, TermOfCondition],
       synchronize: true,

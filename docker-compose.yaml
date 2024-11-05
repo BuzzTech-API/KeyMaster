@@ -1,0 +1,74 @@
+services:
+  db:
+    image: postgres
+    restart: always
+    container_name: dbPostgres
+    secrets:
+      - db-password
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "pg_isready",
+          "-q",
+          "-d",
+          "keymaster",
+          "-U",
+          "postgres"
+        ]
+      interval: 3s
+      retries: 5
+      start_period: 30s
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - backnet
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=keymaster
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
+    ports:
+      - 5432:5432
+    expose:
+      - 5432
+
+  adminer:
+    image: adminer
+    restart: always
+    container_name: adminer
+    ports:
+      - 8080:8080
+    networks:
+      - backnet
+
+  backend:
+    build:
+      context: backend
+      dockerfile: Dockerfile
+      target: backend
+    volumes:
+      - ./backend/:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm run start:dev
+    depends_on:
+      - db
+    environment:
+      PORT: 8000
+      NODE_ENV: development
+    container_name: backend
+    user: "node"
+    ports:
+      - 8000:8000
+    networks:
+      - backnet
+        
+volumes:
+  db-data:
+
+
+secrets:
+  db-password:
+    file: ./db/password.txt
+
+networks:
+  backnet:
