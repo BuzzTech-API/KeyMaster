@@ -15,6 +15,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
   children,
   required = false,
 }) => {
+
   return (
     <div className={className}>
       <input

@@ -8,6 +8,7 @@ import { GetTermOfConditions } from "../api/term-of-conditions";
 import Condition from "../types/condition";
 import { createUserHasConsent } from "../api/user_has_consent";
 
+
 interface Signpprops {
   setActiveScreen: React.Dispatch<React.SetStateAction<string>>; // Callback prop
   isSuperUser?: boolean;
@@ -175,6 +176,7 @@ const Signup: React.FC<Signpprops> = ({
           )}
 
           <TermsAndCondition isOpen={isOpen}  pdfLink={termOfConditions.pdfLink!== undefined? termOfConditions.pdfLink : ''} setIsOpen={setIsOpen} />
+
           {/* Submit Button */}
           <button
             type="submit"

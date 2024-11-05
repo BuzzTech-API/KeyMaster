@@ -14,6 +14,7 @@ import { TermProvider } from './context/TermsContext';
 
 const App = () => {
   const [activeScreen, setActiveScreen] = useState("login");
+
   return (
     <UserProvider>
       <TermProvider>
@@ -23,7 +24,7 @@ const App = () => {
           {activeScreen !== 'login' && activeScreen !== 'singup' && <Sidebar setActiveScreen={setActiveScreen} />}
           {activeScreen === 'home' && (<Home />)}
           {activeScreen === 'savedPasswords' && (<SavedPasswords />)}
-          {activeScreen === 'userProfile' && (<UserProfile />)}
+          {activeScreen === 'userProfile' && (<UserProfile  setActiveScreen={setActiveScreen}/>)}
           {activeScreen === "signup" && (
             <Signup setActiveScreen={setActiveScreen} />
           )}
