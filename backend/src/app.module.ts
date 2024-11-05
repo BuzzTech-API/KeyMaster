@@ -24,8 +24,8 @@ import { BlacklistModule } from './blacklist/blacklist.module';
   imports: [
     MongooseModule.forRoot('mongodb://localhost:27017/blacklist'),
     TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
+      type: 'postgres', // or your database type
+      host: 'db',
       port: 5432,
       username: 'postgres',
       password: 'Senha123#',
