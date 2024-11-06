@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
@@ -12,6 +12,7 @@ import { User } from './user/entities/user.entity';
 import { TermOfCondition } from './term-of-condition/entities/term-of-condition.entity';
 import { SessionModule } from './session/session.module';
 import { Session } from './session/entities/session.entity';
+import { SessionMiddleware } from './session/services/session.middleware';
 
 @Module({
   imports: [
@@ -35,4 +36,13 @@ import { Session } from './session/entities/session.entity';
 })
 
 
-export class AppModule { }
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(SessionMiddleware) //Ivan Germano: Aplicando o middleware
+      .exclude(
+        { path: 'user/login', method: RequestMethod.POST } //Ivan Germano: Exclui a rota de login do middleware de sessão
+      )
+      .forRoutes({ path: '*', method: RequestMethod.ALL }); //Ivan Germano: Define as rotas que devem ser protegidas
+  }
+}

@@ -36,6 +36,16 @@ export class SessionService {
   }
 
   async invalidateSession(sessionToken: string): Promise<void> {
-    await this.sessionRepository.update({ sessionToken }, { isActive: false });
+    // Ivan Germano: Aqui é buscado no BD a Sessão
+    const session = await this.sessionRepository.findOne({ where: { sessionToken, isActive: true } });
+
+    if (!session) {
+      // Ivan Germano: Se a sessão não for encontrada ou estiver inativa, significa que já foi invalidada ou é inválida
+      throw new Error('Sessão inválida ou já foi encerrada.');
+    }
+
+    // Ivan Germano: Aqui marcar a Sessão como Inativa
+    session.isActive = false;
+    await this.sessionRepository.save(session);
   }
 }
