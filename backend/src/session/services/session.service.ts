@@ -11,18 +11,29 @@ export class SessionService {
     private readonly sessionRepository: Repository<Session>,
   ) {}
 
+  // Ivan Germano: Método para criar sessão
   async createSession(userId: number): Promise<string> {
     const sessionToken = randomBytes(32).toString('hex');
     const session = new Session();
     session.userId = userId;
     session.sessionToken = sessionToken;
     session.createdAt = new Date();
-    session.expiresAt = new Date(Date.now() + 3600000); // Expiração em 1 hora
+    session.expiresAt = new Date(Date.now() + 3600000); // Expiração em 1 hora.
 
     await this.sessionRepository.save(session);
     return sessionToken;
   }
 
+  // Ivan Germano: Método para buscar a sessão pelo token.
+  async findSessionByToken(sessionToken: string): Promise<Session | null> {
+    const session = await this.sessionRepository.findOne({
+      where: { sessionToken, isActive: true },
+    });
+
+    return session || null;
+  }
+
+  // Ivan Germano: Método para verificar se a sessão é valida.
   async validateSession(sessionToken: string): Promise<boolean> {
     const session = await this.sessionRepository.findOne({
       where: { sessionToken, isActive: true },
@@ -35,6 +46,7 @@ export class SessionService {
     return true;
   }
 
+  // Ivan Germano: Método para invalidar a sessão.
   async invalidateSession(sessionToken: string): Promise<void> {
     // Ivan Germano: Aqui é buscado no BD a Sessão
     const session = await this.sessionRepository.findOne({ where: { sessionToken, isActive: true } });

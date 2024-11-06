@@ -11,7 +11,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   // Ivan Germano: Rota responsável para criar um novo usuário.
-  @Post()
+  @Post('create')
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
       return await this.userService.create(createUserDto);
   }

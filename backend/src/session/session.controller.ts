@@ -1,10 +1,14 @@
-import { Controller, Post, Req, Res } from '@nestjs/common';
+import { Controller, Get, Post, Req, Res } from '@nestjs/common';
 import { SessionService } from './services/session.service';
 import { Request, Response } from 'express';
+import { UserService } from 'src/user/services/user.service';
 
 @Controller('session')
 export class SessionController {
-  constructor(private readonly sessionService: SessionService) {}
+  constructor(
+    private readonly sessionService: SessionService,
+    private readonly userService: UserService,
+  ) {}
 
   @Post('logout')
   async logout(@Req() req: Request, @Res() res: Response) {
@@ -20,5 +24,23 @@ export class SessionController {
       // Ivan Germano: Caso não exista token, retorna erro
       res.status(400).json({ message: 'Nenhuma sessão ativa encontrada' });
     }
+  }
+
+  @Get('current')
+  async getUserSession(@Req() req: Request, @Res() res: Response) {
+    const sessionToken = req.cookies['session_token'];
+
+    if (!sessionToken) {
+      return res.status(401).json({ message: 'Nenhum token de sessão encontrado. Faça login novamente.' });
+    }
+
+    const session = await this.sessionService.findSessionByToken(sessionToken);
+
+    if (!session || !session.isActive) {
+      return res.status(401).json({ message: 'Sessão inválida ou expirada. Faça login novamente.' });
+    }
+
+    const user = await this.userService.findOne(session.userId);
+    res.json({ user });
   }
 }
