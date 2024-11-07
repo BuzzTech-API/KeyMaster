@@ -12,6 +12,8 @@ export async function login(email: string, password: string): Promise<LoginRespo
         headers: {
           'Content-Type': 'application/json',
         },
+        // Ivan Germano: Inclui cookies nas requisições, necessário para o session_token
+        credentials: 'include',
         body: JSON.stringify({ email, password }),
       });
       // Ivan Germano: Log com a resposta Bruta, para debug.

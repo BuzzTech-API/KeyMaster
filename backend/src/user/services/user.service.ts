@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entities/user.entity';
 import { Repository } from 'typeorm';
 import { EncryptionService } from './encryption.service';
+import { SessionService } from '../../session/services/session.service'; // Ivan Germano: Importando o serviço de sessão
 
 @Injectable()
 export class UserService {
@@ -14,7 +15,9 @@ export class UserService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     // Ivan Germano: Aqui estamos injetando nosso serviço de criptografia em UserService.
-    private readonly encryptionService: EncryptionService 
+    private readonly encryptionService: EncryptionService,
+    // Ivan Germano: Aqui estamos injetando nosso serviço de sessão em UserService.
+    private readonly sessionService: SessionService  
   ){}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -54,8 +57,8 @@ export class UserService {
     return await this.userRepository.remove(user)
   }
 
-  // Ivan Germano: Função de login para verificar as credenciais do usuário
-  async login(loginUserDto: LoginUserDto): Promise<User> {
+  // Ivan Germano: Função de login para verificar as credenciais do usuário e criar uma sessão
+  async login(loginUserDto: LoginUserDto): Promise<{ user: User; sessionToken: string }> {
     const { email, password } = loginUserDto;
 
     // Ivan Germano: Aqui verifica se o email digitado existe no banco de dados.
@@ -76,7 +79,16 @@ export class UserService {
     }
     // Ivan Germano: Retorna o usuário em caso de sucesso
     console.log('Login bem-sucedido para usuário:', user.email);
+
+     // Ivan Germano: Após o login bem sucedido criar uma sessão e retornar o token
+    const sessionToken = await this.sessionService.createSession(user.id);
+    console.log('Sessão criada com token:', sessionToken);
+
     console.log(user)
-    return user; 
+    return {user, sessionToken}; 
+  }
+
+  async logout(sessionToken: string): Promise<void> {
+    await this.sessionService.invalidateSession(sessionToken);
   }
 }
