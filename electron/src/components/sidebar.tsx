@@ -42,6 +42,9 @@ const Sidebar: React.FC<{ setActiveScreen: (screen: string) => void }> = ({ setA
         <button className="p-4 hover:bg-gray-700" onClick={() => setActiveScreen('savedPasswords')}>
           Saved Passwords
         </button>
+        <button className="p-4 hover:bg-gray-700" onClick={() => setActiveScreen('userProfile')}>
+          User Profile
+        </button>
 
         <div className="mt-auto">
           <button

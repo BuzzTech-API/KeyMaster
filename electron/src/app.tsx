@@ -10,7 +10,7 @@ import UserProfile from './pages/userProfile';
 
 const App = () => {
 
-  const [activeScreen, setActiveScreen] = useState('login');
+  const [activeScreen, setActiveScreen] = useState('userProfile');
 
   const handleLoginSuccess = () => {
     // Change the active screen to 'home' after login
@@ -34,7 +34,7 @@ const App = () => {
             {activeScreen === 'userProfile' && (
         <>
           <Sidebar setActiveScreen={setActiveScreen} />
-          <UserProfile />
+          <UserProfile name='Vitor Spricigo Lima' email='vitor.lima2206@gmail.com' password='asdf@!#D123d12SAD' />
         </>
       )}
     </div>

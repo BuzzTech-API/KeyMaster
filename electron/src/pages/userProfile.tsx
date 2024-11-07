@@ -1,4 +1,5 @@
-import React, { useState } from "react"
+import { getCurrentUser } from "../api/getCurrentUser";
+import React, { useEffect, useState } from "react"
 import { FaRegEdit } from "react-icons/fa";
 
 
@@ -8,11 +9,38 @@ interface UserProps {
   password?: string
 }
 
-const UserProfile: React.FC<UserProps> = ({ email, password }) => {
+
+
+
+const UserProfile: React.FC<UserProps> = ({ name, email, password }) => {
+
+  // const [user, setUser] = useState<{ email: string} | null>(null);
+
+  // useEffect(() => {
+  //   // Ivan Germano: Chamar a função para obter o usuário atual
+  //   const getUser = async () => {
+  //     const response = await getCurrentUser();
+  //     if (response.success && response.user) {
+  //       setUser(response.user); // Ivan Germano: Define o usuário no estado
+  //     } else {
+  //       console.error(response.message);
+  //     }
+  //   };
+
+  //   getUser();
+  // }, []);
+
 
   const [isEditing, setIsEditing] = useState(false);
+  const [userDetails, setUserDetails] = useState({
+    name: name,
+    email: email,
+    password: password
+  });
 
   const handleSaveChanges = () => {
+
+    
     // Save changes to the server or update state as needed
     setIsEditing(false);
   };
@@ -24,72 +52,87 @@ const UserProfile: React.FC<UserProps> = ({ email, password }) => {
   };
 
   const handleEditUser = () => {
-    console.log("Editing user...");
+    setIsEditing(true);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setUserDetails((prevDetails) => ({ ...prevDetails, [name]: value }));
   };
 
   return (
 
-      <div className="ml-56 flex-grow flex flex-col bg-gray-900 text-white p-16">
-        <div className = "flex justify-between">
-          
-          <h2 className="text-2xl font-bold mb-6 text-left">User Profile</h2>
-          <div className="flex cursor-pointer" onClick={handleEditUser}>
+    <div className="ml-56 flex-grow flex flex-col bg-gray-900 text-white p-16">
+      <div className="flex justify-between">
+
+        <h2 className="text-2xl font-bold mb-6 text-left">User Profile</h2>
+        <div className="flex cursor-pointer" onClick={handleEditUser}>
           <FaRegEdit name="edit" size={24} color="white" />
           <h2 className="text-xl font-bold mb-6 text-right ml-2">Edit</h2>
-          </div>
-
         </div>
-          <div className="mb-4">
-            <label className="block font-semibold mb-2">Username</label>
-            <input
-              className="w-full p-2 bg-gray-700 rounded text-gray-200 focus:outline-none"
-              value={''}
-              // onChange={(e) => { setUsername(e.target.value); setIsEditing(true); }}
-            />
-          </div>
 
-          <div className="mb-4">
-            <label className="block font-semibold mb-2">Email</label>
-            <input
-              className="w-full p-2 bg-gray-700 rounded text-gray-200 focus:outline-none"
-              value={email}
-              // onChange={(e) => { setEmail(e.target.value); setIsEditing(true); }}
-            />
-          </div>
-
-          <div className="mb-6">
-            <label className="block font-semibold mb-2">Password</label>
-            <input
-              className="w-full p-2 bg-gray-700 rounded text-gray-200 focus:outline-none"
-              type="password"
-              value={password}
-              // onChange={(e) => { setPassword(e.target.value); setIsEditing(true); }}
-            />
-          </div>
-
-          {isEditing && (
-            <button
-              onClick={handleSaveChanges}
-              className="w-full bg-blue-600 p-2 rounded font-semibold hover:bg-blue-700 transition-colors mb-4"
-            >
-              Save Changes
-            </button>
-          )}
-
-          <button
-            onClick={() => console.log("Logging out")}
-            className="w-full bg-red-600 p-2 rounded font-semibold hover:bg-red-700 transition-colors mb-4"
-          >
-            Logout
-          </button>
-
-          <button
-            onClick={handleDeleteAccount}
-            className="fixed bottom-4 right-4 text-md text-gray-400 underline mt-4 "
-          >
-            Delete Account
-          </button>
       </div>
+      <div className="mb-4">
+        <label className="block font-semibold mb-2">Name</label>
+        {isEditing ? (
+          <input
+            type="text"
+            name="name"
+            value={userDetails.name}
+            onChange={handleInputChange}
+            className="w-full p-2 bg-gray-700 rounded text-gray-200 focus:outline-none"
+          />
+        ) : (
+          <p className="p-2 bg-gray-700 rounded">{userDetails.name}</p>
+        )}
+      </div>
+
+      <div className="mb-4">
+        <label className="block font-semibold mb-2">Email</label>
+        {isEditing ? (
+          <input
+            type="email"
+            name="email"
+            value={userDetails.email}
+            onChange={handleInputChange}
+            className="w-full p-2 bg-gray-700 rounded text-gray-200 focus:outline-none"
+          />
+        ) : (
+          <p className="p-2 bg-gray-700 rounded">{userDetails.email}</p>
+        )}
+      </div>
+
+      <div className="mb-6">
+        <label className="block font-semibold mb-2">Password</label>
+        {isEditing ? (
+          <input
+            type="text"
+            name="password"
+            value={userDetails.password}
+            onChange={handleInputChange}
+            className="w-full p-2 bg-gray-700 rounded text-gray-200 focus:outline-none"
+          />
+        ) : (
+          <p className="p-2 bg-gray-700 rounded">{"•".repeat(userDetails.password.length)}</p>
+        )}
+      </div>
+
+      {isEditing && (
+        <button
+          onClick={handleSaveChanges}
+          className="w-full bg-blue-600 p-2 rounded font-semibold hover:bg-blue-700 transition-colors mb-4"
+        >
+          Save Changes
+        </button>
+      )}
+
+      <button
+        onClick={handleDeleteAccount}
+        className="fixed bottom-4 right-4 text-md text-gray-400 underline mt-4 "
+      >
+        Delete Account
+      </button>
+    </div>
   );
 }
 
