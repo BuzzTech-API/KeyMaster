@@ -4,6 +4,7 @@ import Home from './pages/home';
 import SavedPasswords from './pages/savedPasswords';
 import Sidebar from './components/sidebar';
 import Login from './pages/login';
+import UserProfile from './pages/userProfile';
 
 
 
@@ -15,8 +16,7 @@ const App = () => {
     // Change the active screen to 'home' after login
     setActiveScreen('home');
   };
-
-  return (
+   return (
     <div className="flex h-screen">
       {activeScreen === 'login' && <Login onLoginSuccess={handleLoginSuccess} />}
       {activeScreen === 'home' && (
@@ -29,6 +29,12 @@ const App = () => {
         <>
           <Sidebar setActiveScreen={setActiveScreen} />
           <SavedPasswords />
+        </>
+      )}
+            {activeScreen === 'userProfile' && (
+        <>
+          <Sidebar setActiveScreen={setActiveScreen} />
+          <UserProfile />
         </>
       )}
     </div>
