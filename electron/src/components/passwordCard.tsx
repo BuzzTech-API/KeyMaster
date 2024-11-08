@@ -4,7 +4,7 @@ import { FaEye } from 'react-icons/fa'; // You can use any icon library
 interface PasswordCardProps {
     passwordName: string;
     email: string;
-    icon: React.ReactNode; // Accept any React component as the icon
+    icon?: React.ReactNode; // Accept any React component as the icon
     isSelected: boolean;
     onClick: () => void; // Callback function for click event
 }

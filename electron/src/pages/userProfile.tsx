@@ -3,40 +3,51 @@ import React, { useEffect, useState } from "react"
 import { FaRegEdit } from "react-icons/fa";
 
 
-interface UserProps {
-  name?: string,
-  email?: string,
-  password?: string
-}
+const UserProfile: React.FC = () => {
 
+  interface User{
+    id: number;
+    name: string;
+    email:string;
+    password: string;
+  }
 
-
-
-const UserProfile: React.FC<UserProps> = ({ name, email, password }) => {
-
-  // const [user, setUser] = useState<{ email: string} | null>(null);
-
-  // useEffect(() => {
-  //   // Ivan Germano: Chamar a função para obter o usuário atual
-  //   const getUser = async () => {
-  //     const response = await getCurrentUser();
-  //     if (response.success && response.user) {
-  //       setUser(response.user); // Ivan Germano: Define o usuário no estado
-  //     } else {
-  //       console.error(response.message);
-  //     }
-  //   };
-
-  //   getUser();
-  // }, []);
-
-
+  const [user, setUser] = useState<User | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [userDetails, setUserDetails] = useState({
-    name: name,
-    email: email,
-    password: password
+    name: '',
+    email: '',
+    password: ''
   });
+
+
+  useEffect(() => {
+    // Ivan Germano: Chamar a função para obter o usuário atual
+    const getUser = async () => {
+      const response = await getCurrentUser();
+      if (response.success && response.user) {
+        setUser(response.user); // Ivan Germano: Define o usuário no estado
+      } else {
+        console.error(response.message);
+      }
+    };
+
+
+    getUser();
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      setUserDetails({
+        name: user.name,
+        email: user.email,
+        password: user.password
+      });
+    }
+  }, [user]);
+
+
+
 
   const handleSaveChanges = () => {
 
@@ -61,6 +72,8 @@ const UserProfile: React.FC<UserProps> = ({ name, email, password }) => {
   };
 
   return (
+
+
 
     <div className="ml-56 flex-grow flex flex-col bg-gray-900 text-white p-16">
       <div className="flex justify-between">

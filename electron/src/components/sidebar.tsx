@@ -3,8 +3,17 @@ import { getCurrentUser } from '../api/getCurrentUser'; // Ivan Germano: Importa
 import { logout } from '../api/logout'; // Ivan Germano: Importa Rota de Logout.
 
 const Sidebar: React.FC<{ setActiveScreen: (screen: string) => void }> = ({ setActiveScreen }) => {
+    interface User{
+      id: number;
+      name: string;
+      email:string;
+      password: string;
+    }
 
-    const [user, setUser] = useState<{ email: string } | null>(null);
+    const [user, setUser] = useState<User | null>(null);
+
+
+
 
     useEffect(() => {
       // Ivan Germano: Chamar a função para obter o usuário atual
@@ -16,7 +25,6 @@ const Sidebar: React.FC<{ setActiveScreen: (screen: string) => void }> = ({ setA
           console.error(response.message);
         }
       };
-  
       getUser();
     }, []);
 
@@ -29,26 +37,27 @@ const Sidebar: React.FC<{ setActiveScreen: (screen: string) => void }> = ({ setA
     };
 
     return (
-      <div className="z-10 fixed w-56 bg-gray-800 text-white h-screen flex flex-col">
+      <div className="z-10 fixed w-56 bg-gray-800 text-white h-screen flex flex-col items">
         {/*Ivan Germano: Componente para mostrar qual usuário está logado */}
         {user && (
-          <div className="p-4 bg-gray-700 text-center">
-            <p>Usuário: {user.email}</p>
+          <div className="p-4 bg-gray-300 text-black font-bold text-center">
+            <p>Usuário: {user.name}</p>
           </div>
         )}
-        <button className="p-4 hover:bg-gray-700" onClick={() => setActiveScreen('home')}>
+        <button className="border-2 p-4 hover:bg-gray-700" onClick={() => setActiveScreen('home')}>
           Home
         </button>
-        <button className="p-4 hover:bg-gray-700" onClick={() => setActiveScreen('savedPasswords')}>
+        <button className="border-2 p-4 hover:bg-gray-700" onClick={() => setActiveScreen('savedPasswords')}>
           Saved Passwords
         </button>
-        <button className="p-4 hover:bg-gray-700" onClick={() => setActiveScreen('userProfile')}>
-          User Profile
-        </button>
+
 
         <div className="mt-auto">
+        <button className="border-2 p-4 hover:bg-gray-700 w-full" onClick={() => setActiveScreen('userProfile')}>
+          User Profile
+        </button>
           <button
-            className="p-4 hover:bg-gray-700 w-full"
+            className="p-4 bg-red-700 hover:bg-red-500 w-full"
             onClick={handleLogout}
             >
             Logout

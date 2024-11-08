@@ -1,26 +1,58 @@
-import { FaEye, FaLock } from "react-icons/fa";
+import { FaEye, FaLock, FaPlus } from "react-icons/fa";
 import PasswordCard from "../components/passwordCard";
 import { useEffect, useState } from "react";
 import PasswordDetailsPanel from "../components/passwordDetailsPannel";
+import { Password } from "../interfaces/password.interface";
+import { createPassword, deletePassword, getPasswords } from "../api/password";
+import AddPasswordModal from "../components/addPasswordModal";
 
 const SavedPasswords: React.FC = () => {
 
+
+
+
+  const [passwords, setPasswords] = useState<Password[]>([]);
+
+  //getAll no backend
+  const getAllPasswords = async () => {
+    const data = await getPasswords(); // Capture return
+    setPasswords(data); // Update state with fetched data
+  };
+  useEffect(() => {
+    getAllPasswords();
+  }, []);
+
+
+
+  // Modal de Criar nova senha
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleAddPasswordModal = () => setIsModalOpen(true);
+  const handleCloseAddPasswordModal = () => setIsModalOpen(false);
+
+  const handleSavePassword = async (title: string, login: string, password: string, creationDate: Date) => {
+    const passwordData = { title, login, password, creationDate }
+    await createPassword(passwordData)
+    getAllPasswords()
+  };
+
+
+  const handleDeletePassword = async (id: number) => {
+    const success = await deletePassword(id);
+  
+    if (success) {
+      setPasswords((prevPasswords) => prevPasswords.filter((password) => password.id !== id));
+    } else {
+      console.log("Failed to delete password");
+    }
+    handleClosePanel()
+  };
+
+
+
+  // Painel de detalhes da senha
   const [selectedPassword, setSelectedPassword] = useState<number | null>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
-
-  // Sample password data
-  const passwords = [
-    { id: 1, name: 'Example Password', email: 'user@example.com', icon: <FaEye size={24} /> },
-    { id: 2, name: 'Another Password', email: 'another@example.com', icon: <FaLock size={24} /> },
-    { id: 3, name: 'Example Password', email: 'user@example.com', icon: <FaEye size={24} /> },
-    { id: 4, name: 'Another Password', email: 'another@example.com', icon: <FaLock size={24} /> },
-    { id: 5, name: 'Example Password', email: 'user@example.com', icon: <FaEye size={24} /> },
-    { id: 6, name: 'Another Password', email: 'another@example.com', icon: <FaLock size={24} /> },
-    { id: 7, name: 'Example Password', email: 'user@example.com', icon: <FaEye size={24} /> },
-    { id: 8, name: 'Another Password', email: 'another@example.com', icon: <FaLock size={24} /> },
-    { id: 9, name: 'Example Password', email: 'user@example.com', icon: <FaEye size={24} /> },
-    { id: 10, name: 'Another Password', email: 'another@example.com', icon: <FaLock size={24} /> },
-  ];
 
   const handleCardClick = (id: number) => {
     setSelectedPassword(id);
@@ -36,12 +68,23 @@ const SavedPasswords: React.FC = () => {
 
   return (
     <div className="ml-56 flex-1 p-4 bg-blue-950 overflow-y-auto h-full scrollbar relative">
+      <button className="flex items-center bg-white text-black font-semibold py-2 px-4 rounded mb-4 hover:bg-gray-400 ml-auto"
+        onClick={handleAddPasswordModal}
+      >
+        <FaPlus className="mr-2" />
+        Add New Password
+      </button>
+      <AddPasswordModal
+        isOpen={isModalOpen}
+        onClose={handleCloseAddPasswordModal}
+        onSave={handleSavePassword}
+      />
       {passwords.map((password) => (
         <PasswordCard
           key={password.id}
-          passwordName={password.name}
-          email={password.email}
-          icon={password.icon}
+          passwordName={password.title}
+          email={password.login}
+          icon={<FaLock size={24} />}
           isSelected={password.id === selectedPassword}
           onClick={() => handleCardClick(password.id)}
         />
@@ -57,14 +100,15 @@ const SavedPasswords: React.FC = () => {
           {/* Sliding panel */}
           <div
             className={`fixed top-0 right-0 w-1/2 h-full bg-gray-900 text-white shadow-lg transform transition-transform duration-300 z-30 $ isPanelOpen ? 'translate-x-0' : 'translate-x-full'`}
-
-
-
           >
             {selectedPasswordData && (
               <PasswordDetailsPanel
-                passwordName={selectedPasswordData.name}
-                email={selectedPasswordData.email}
+                title={selectedPasswordData.title}
+                login={selectedPasswordData.login}
+                password={selectedPasswordData.password}
+                id={selectedPasswordData.id}
+                creationDate={selectedPasswordData.creationDate}
+                handleDeletePassword={handleDeletePassword}
                 onClose={handleClosePanel}
               />
             )}
