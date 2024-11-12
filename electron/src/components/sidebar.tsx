@@ -1,30 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { getCurrentUser } from '../api/getCurrentUser'; // Ivan Germano: Importa Rota para Usuário atual.
 import { logout } from '../api/logout'; // Ivan Germano: Importa Rota de Logout.
+import { useUser } from '../context/UserContext';
 
 const Sidebar: React.FC<{ setActiveScreen: (screen: string) => void }> = ({ setActiveScreen }) => {
-    interface User{
-      id: number;
-      name: string;
-      email:string;
-      password: string;
-    }
 
-    const [user, setUser] = useState<User | null>(null);
-      
-    useEffect(() => {
-      // Ivan Germano: Chamar a função para obter o usuário atual
-      const getUser = async () => {
-        const response = await getCurrentUser();
-        if (response.success && response.user) {
-          setUser(response.user); // Ivan Germano: Define o usuário no estado
-        } else {
-          console.error(response.message);
-        }
-      };
-
-      getUser();
-    }, []);
+    //chamando o User >:)
+    const {user} = useUser()
 
     const handleLogout = async () => {
       // Ivan Germano: Aqui chamamos a função de logout da API
