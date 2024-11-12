@@ -19,12 +19,14 @@ const UserProfile: React.FC<{setActiveScreen: (screen: string) => void}> = ({ se
     password: ''
   });
 
+  
   //Edição de Usuário
   const [isEditing, setIsEditing] = useState(false);
   const handleEditUser = () => {
     setIsEditing(true);
   };
 
+  
   const handleSaveChanges = async () => {
 
     const updatedUserDetails = { ...userDetails };
@@ -52,6 +54,8 @@ const UserProfile: React.FC<{setActiveScreen: (screen: string) => void}> = ({ se
     // Save changes to the server or update state as needed
     setIsEditing(false);
   };
+  
+  
 
 
 
