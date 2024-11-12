@@ -9,71 +9,50 @@ import { useUser } from "../context/UserContext";
 
 const UserProfile: React.FC = () => {
 
-  interface User {
-    id: number;
-    name: string;
-    email: string;
-    password: string;
-  }
+  const { user, setUser } = useUser()
 
-  const [isEditing, setIsEditing] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-
-  const [user, setUser] = useState<User | null>(null);
   const [userDetails, setUserDetails] = useState({
-    id: 0,
-    name: '',
-    email: '',
+    id: user.id,
+    name: user.name,
+    email: user.email,
     password: ''
   });
-
-
-  useEffect(() => {
-    const getUser = async () => {
-      const response = await getCurrentUser();
-      if (response.success && response.user) {
-        setUser(response.user);
-      } else {
-        console.error(response.message);
-      }
-    };
-
-
-    getUser();
-  }, []);
-
-  useEffect(() => {
-    if (user) {
-      setUserDetails({
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        password: ""
-      });
-    }
-  }, [user]);
-
-
-
-
+  
+  //Edição de Usuário
+  const [isEditing, setIsEditing] = useState(false);
+  const handleEditUser = () => {
+    setIsEditing(true);
+  };
+  
   const handleSaveChanges = async () => {
 
-    const updatedDetails = { ...userDetails };
+    const updatedUserDetails = { ...userDetails };
 
-    if (updatedDetails.password === "") {
-      delete updatedDetails.password;
+    //Se o usuário não colocar senha ela não sera alterada
+    if (updatedUserDetails.password === "") {
+      delete updatedUserDetails.password;
     }
-    
+
     //salvar os userDetails
-    console.log("Atualizando usuário: ", {userDetails})
-    console.log(user.id)
-    const result = await updateUser(updatedDetails, user.id)
+    console.log("Atualizando usuário: ", { userDetails })
+    const result = await updateUser(updatedUserDetails, user.id)
     console.log("Resultado da operação: ", result)
 
+    if(result.success){
+
+      //Isso salva o usuário no context, garantindo que só vai salvar as alterações
+      setUser((prevUser) => ({
+        ...prevUser,
+        ...updatedUserDetails,
+      }));
+
+    }
 
     // Save changes to the server or update state as needed
     setIsEditing(false);
   };
+  
+  
 
   const handleDeleteAccount = () => {
     if (window.confirm("Tem certeza que deseja deletar sua conta? Essa ação não pode ser desfeita!")) {
@@ -85,10 +64,7 @@ const UserProfile: React.FC = () => {
     }
   };
 
-  const handleEditUser = () => {
-    setIsEditing(true);
-  };
-
+  const [showPassword, setShowPassword] = useState(false);
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };

@@ -1,8 +1,10 @@
+import { useUser } from "../context/UserContext";
 import { Password } from "../interfaces/password.interface";
 
-export async function getPasswords(): Promise<Password[]> {
+
+export async function getUserPasswords(userId: number): Promise<Password[]> {
     try {
-        const response = await fetch("http://localhost:8000/password", {
+        const response = await fetch(`http://localhost:8000/password/user/${userId}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -23,9 +25,10 @@ export async function getPasswords(): Promise<Password[]> {
 }
 
 
-export async function createPassword(newPassword: Password): Promise<Password | null> {
+export async function createPassword(newPassword: Password, userId: number): Promise<Password | null> {
+
     try {
-        const response = await fetch("http://localhost:8000/password", {
+        const response = await fetch(`http://localhost:8000/password/user/${userId}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -62,7 +65,7 @@ export async function deleteUserPassword(userId: number): Promise<boolean> {
 
         return true; // Return true if the deletion is successful
     } catch (error) {
-      console.error("Error deleting password:", error);
-      return false; // Return false on error
+        console.error("Error deleting password:", error);
+        return false; // Return false on error
     }
-  }
+}
