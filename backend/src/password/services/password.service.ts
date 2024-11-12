@@ -5,18 +5,14 @@ import { Password } from '../entities/password.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
-<<<<<<< HEAD
 import { PasswordEncryptionService } from './passwordEncryption.service';
 import Cryptr from 'cryptr';
-=======
->>>>>>> cb0d8ab (Refactor: Refatoração no modo de pegar o usuário atual da session usando react Context)
 
 @Injectable()
 export class PasswordService {
   constructor(
     @InjectRepository(Password)
     private readonly passwordRepository: Repository<Password>,
-<<<<<<< HEAD
 
     @InjectRepository(User)
     private userRepository: Repository<User>,
@@ -24,20 +20,12 @@ export class PasswordService {
     private readonly passwordEncryptionService: PasswordEncryptionService
   ) { }
 
-=======
-    
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
-  ){}
 
->>>>>>> cb0d8ab (Refactor: Refatoração no modo de pegar o usuário atual da session usando react Context)
   async create(passwordData: Partial<Password>, userId: number): Promise<Password> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
       throw new Error('Usuário não encontrado');
     }
-
-<<<<<<< HEAD
 
     //Descriptografa a userKey com a chave mestra
     const decryptUserKey = this.passwordEncryptionService.decryptKey(user.userKey)
@@ -49,14 +37,10 @@ export class PasswordService {
     passwordData.password = cryptPassword
 
 
-    const newPassword = this.passwordRepository.create({
-      ...passwordData,
-      user: user, // Associa o user com a senha
-=======
+
     const newPassword = this.passwordRepository.create({
       ...passwordData,
       user: user, // Associate the user with the password
->>>>>>> cb0d8ab (Refactor: Refatoração no modo de pegar o usuário atual da session usando react Context)
     });
 
     return await this.passwordRepository.save(newPassword);
@@ -77,12 +61,11 @@ export class PasswordService {
   }
 
   async getPasswordsByUserId(userId: number): Promise<Password[]> {
-<<<<<<< HEAD
-
     const passwords = await this.passwordRepository.find({
       where: { user: { id: userId } },
       relations: ['user'], // This ensures the user is included in the response
     });
+
 
     //Busca o usuário, descritografa a userKey, cria o objeto com a key descritografada
     const user = await this.userRepository.findOne({ where: { id: userId } });
@@ -94,12 +77,6 @@ export class PasswordService {
       ...password,
       password: userCryptr.decrypt(password.password) // Example transformation function
     }));
-=======
-    return this.passwordRepository.find({
-      where: { user: { id: userId } },
-      relations: ['user'],  // This ensures the user is included in the response
-    });
->>>>>>> cb0d8ab (Refactor: Refatoração no modo de pegar o usuário atual da session usando react Context)
   }
 
   async update(id: number, updatePasswordDto: UpdatePasswordDto): Promise<Password> {
