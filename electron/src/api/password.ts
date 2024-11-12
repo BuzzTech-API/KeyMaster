@@ -69,4 +69,5 @@ export async function deleteUserPassword(userId: number): Promise<boolean> {
         console.error("Error deleting password:", error);
         return false; // Return false on error
     }
+
 }

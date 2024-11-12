@@ -10,6 +10,8 @@ import Signup from "./pages/singup";
 import CadastroTermo from "./pages/termoCadastro";
 import { TermProvider } from './context/TermsContext';
 
+
+
 const App = () => {
   const [activeScreen, setActiveScreen] = useState("login");
   return (
@@ -41,7 +43,6 @@ const App = () => {
 
 
 };
-
 function render() {
   const root = ReactDOM.createRoot(document.getElementById("app"));
   root.render(<App />);

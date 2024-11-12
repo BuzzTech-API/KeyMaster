@@ -31,6 +31,7 @@ const Login: React.FC<LoginProps> = ({ setActiveScreen }) => {
 
       }
       setActiveScreen('home')
+
     } else {
       setErrorMessage(result.message || 'Login falhou!');
     }

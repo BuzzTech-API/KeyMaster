@@ -50,6 +50,8 @@ const UserProfile: React.FC = () => {
   const handleSaveChanges = async (e: React.FormEvent) => {
 
     e.preventDefault()
+  
+
     const updatedUserDetails = { ...userDetails };
 
     //Se o usuário não colocar senha ela não sera alterada
@@ -82,6 +84,8 @@ const UserProfile: React.FC = () => {
     // Save changes to the server or update state as needed
     setIsEditing(false);
   };
+  
+  
 
 
 
