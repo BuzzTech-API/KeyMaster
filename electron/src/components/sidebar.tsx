@@ -11,10 +11,7 @@ const Sidebar: React.FC<{ setActiveScreen: (screen: string) => void }> = ({ setA
     }
 
     const [user, setUser] = useState<User | null>(null);
-
-
-
-
+      
     useEffect(() => {
       // Ivan Germano: Chamar a função para obter o usuário atual
       const getUser = async () => {
@@ -25,6 +22,7 @@ const Sidebar: React.FC<{ setActiveScreen: (screen: string) => void }> = ({ setA
           console.error(response.message);
         }
       };
+
       getUser();
     }, []);
 
@@ -42,6 +40,7 @@ const Sidebar: React.FC<{ setActiveScreen: (screen: string) => void }> = ({ setA
         {user && (
           <div className="p-4 bg-gray-300 text-black font-bold text-center">
             <p>Usuário: {user.name}</p>
+            <p>Id: {user.id}</p>
           </div>
         )}
         <button className="border-2 p-4 hover:bg-gray-700" onClick={() => setActiveScreen('home')}>

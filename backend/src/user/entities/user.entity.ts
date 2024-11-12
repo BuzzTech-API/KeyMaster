@@ -12,7 +12,7 @@ export class User {
     @Column()
     isSuperUser: boolean;
 
-    @Column()
+    @Column({unique: true})
     email: string;
 
     @Column()

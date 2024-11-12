@@ -19,6 +19,7 @@ const UserProfile: React.FC = () => {
 
   const [user, setUser] = useState<User | null>(null);
   const [userDetails, setUserDetails] = useState({
+    id: 0,
     name: '',
     email: '',
     password: ''
@@ -42,6 +43,7 @@ const UserProfile: React.FC = () => {
   useEffect(() => {
     if (user) {
       setUserDetails({
+        id: user.id,
         name: user.name,
         email: user.email,
         password: ""
@@ -53,10 +55,17 @@ const UserProfile: React.FC = () => {
 
 
   const handleSaveChanges = async () => {
+
+    const updatedDetails = { ...userDetails };
+
+    if (updatedDetails.password === "") {
+      delete updatedDetails.password;
+    }
     
     //salvar os userDetails
     console.log("Atualizando usuário: ", {userDetails})
-    const result = await updateUser(userDetails, user.id)
+    console.log(user.id)
+    const result = await updateUser(updatedDetails, user.id)
     console.log("Resultado da operação: ", result)
 
 
@@ -108,7 +117,7 @@ const UserProfile: React.FC = () => {
             className="w-full p-2 bg-gray-700 rounded text-gray-200 focus:outline-none"
           />
         ) : (
-          <p className="p-2 bg-gray-700 rounded">{userDetails.name}</p>
+          <p className="p-2 bg-gray-700 rounded">{userDetails.name} </p>
         )}
       </div>
 
