@@ -3,6 +3,8 @@ import { IoEyeOutline, IoEyeSharp } from "react-icons/io5";
 import React, { useEffect, useState } from "react"
 import { FaRegEdit } from "react-icons/fa";
 import { updateUser } from "../api/updateUser";
+import { deleteUser } from "../api/deleteUser";
+import { useUser } from "../context/UserContext";
 
 
 const UserProfile: React.FC = () => {
@@ -75,6 +77,10 @@ const UserProfile: React.FC = () => {
 
   const handleDeleteAccount = () => {
     if (window.confirm("Tem certeza que deseja deletar sua conta? Essa ação não pode ser desfeita!")) {
+
+      deleteUser(user.id)
+
+
       // Handle account deletion logic
     }
   };
