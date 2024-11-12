@@ -1,7 +1,7 @@
 import { HttpException, Injectable } from '@nestjs/common';
-import { CreatePasswordDto } from './dto/create-password.dto';
-import { UpdatePasswordDto } from './dto/update-password.dto';
-import { Password } from './entities/password.entity';
+import { CreatePasswordDto } from '../dto/create-password.dto';
+import { UpdatePasswordDto } from '../dto/update-password.dto';
+import { Password } from '../entities/password.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 

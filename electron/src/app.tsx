@@ -9,34 +9,21 @@ import UserProfile from './pages/userProfile';
 
 
 const App = () => {
-
+  //Estado inicial
   const [activeScreen, setActiveScreen] = useState('home');
 
   const handleLoginSuccess = () => {
-    // Change the active screen to 'home' after login
     setActiveScreen('home');
   };
-   return (
+
+  return (
     <div className="flex h-screen">
+      {/* refatoração, agora só chama o sidebar se a tela ativa não for Login, bem mais claro. */}
+      {activeScreen !== 'login' && <Sidebar setActiveScreen={setActiveScreen} />}
       {activeScreen === 'login' && <Login onLoginSuccess={handleLoginSuccess} />}
-      {activeScreen === 'home' && (
-        <>
-          <Sidebar setActiveScreen={setActiveScreen} />
-          <Home />
-        </>
-      )}
-      {activeScreen === 'savedPasswords' && (
-        <>
-          <Sidebar setActiveScreen={setActiveScreen} />
-          <SavedPasswords />
-        </>
-      )}
-            {activeScreen === 'userProfile' && (
-        <>
-          <Sidebar setActiveScreen={setActiveScreen} />
-          <UserProfile  />
-        </>
-      )}
+      {activeScreen === 'home' && (<Home />)}
+      {activeScreen === 'savedPasswords' && (<SavedPasswords />)}
+      {activeScreen === 'userProfile' && (<UserProfile />)}
     </div>
   );
 }

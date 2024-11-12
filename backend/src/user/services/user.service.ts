@@ -7,6 +7,8 @@ import { User } from '../entities/user.entity';
 import { Repository } from 'typeorm';
 import { EncryptionService } from './encryption.service';
 import { SessionService } from '../../session/services/session.service'; // Ivan Germano: Importando o serviço de sessão
+import * as crypto from 'crypto';
+import { PasswordEncryptionService } from 'src/password/services/passwordEncryption.service';
 
 @Injectable()
 export class UserService {
@@ -17,13 +19,21 @@ export class UserService {
     // Ivan Germano: Aqui estamos injetando nosso serviço de criptografia em UserService.
     private readonly encryptionService: EncryptionService,
     // Ivan Germano: Aqui estamos injetando nosso serviço de sessão em UserService.
-    private readonly sessionService: SessionService  
+    private readonly sessionService: SessionService,
+    // Lemon: Aqui estamos injetando nosso serviço de critografia em PasswordService
+    private readonly passwordEncryptionService: PasswordEncryptionService
   ){}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     // Ivan Germano: Aqui definimos a variavel 'hashedPassword para usar o serviço de criptografia com a função 'hashedPassword'.
     const hashedPassword = await this.encryptionService.hashPassword(createUserDto.password);
     createUserDto.password = hashedPassword;
+
+    //gera uma string aleatoria de 64 caracteres
+    const randomString = crypto.randomBytes(32).toString('hex');
+    //encrypta a string com a chave mestra
+    const encryptedKey = await this.passwordEncryptionService.encryptKey(randomString)
+    createUserDto.userKey = encryptedKey
 
     const userData = await this.userRepository.save(createUserDto);
     return userData;
