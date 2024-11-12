@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PasswordController } from './password.controller';
-import { PasswordService } from './password.service';
+import { PasswordService } from './services/password.service';
 
 describe('PasswordController', () => {
   let controller: PasswordController;

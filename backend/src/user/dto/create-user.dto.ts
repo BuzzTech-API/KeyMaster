@@ -14,6 +14,9 @@ export class CreateUserDto {
     @MinLength(4)
     password: string;
 
+    //sem verificações pois é criada depois
+    userKey?: string
+
     // Ivan Germano: Adiciona o campo de ADM conforme criado no Banco de Dados.
     @IsBoolean()
     @IsNotEmpty()

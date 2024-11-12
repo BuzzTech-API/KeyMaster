@@ -12,7 +12,7 @@ export class User {
     @Column()
     isSuperUser: boolean;
 
-    @Column()
+    @Column({unique: true})
     email: string;
 
     @Column()
@@ -20,6 +20,10 @@ export class User {
 
     @Column()
     password: string
+
+    //Chave para o usuário descriptografar suas senhas. 
+    @Column()
+    userKey: string
 
     @OneToMany(() => Password, (password) => password.user)
     passwords: Password[];
