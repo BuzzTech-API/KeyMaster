@@ -12,7 +12,6 @@ import { TermProvider } from './context/TermsContext';
 
 const App = () => {
   const [activeScreen, setActiveScreen] = useState("login");
-
   return (
     <UserProvider>
       <TermProvider>
