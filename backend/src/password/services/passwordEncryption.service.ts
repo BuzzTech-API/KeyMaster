@@ -4,13 +4,14 @@ import Cryptr from "cryptr";
 
 @Injectable()
 export class PasswordEncryptionService {
+    //TODO: Colocar isso aqui no .env
     private masterCryptr: Cryptr = new Cryptr('Chave Super Segura')
 
 
-    async encryptKey(plainKey: string){
+    encryptKey(plainKey: string){
         return this.masterCryptr.encrypt(plainKey)
     }
-    async decryptKey(encryptedKey: string){
+    decryptKey(encryptedKey: string){
         return this.masterCryptr.decrypt(encryptedKey)
     }
     
