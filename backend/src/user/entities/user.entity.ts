@@ -21,6 +21,7 @@ export class User {
     @Column()
     password: string
 
+    //Chave para o usuário descriptografar suas senhas. 
     @Column()
     userKey: string
 

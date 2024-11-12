@@ -1,19 +1,23 @@
 import { getCurrentUser } from "../api/getCurrentUser";
+import { IoEyeOutline, IoEyeSharp } from "react-icons/io5";
 import React, { useEffect, useState } from "react"
 import { FaRegEdit } from "react-icons/fa";
+import { updateUser } from "../api/updateUser";
 
 
 const UserProfile: React.FC = () => {
 
-  interface User{
+  interface User {
     id: number;
     name: string;
-    email:string;
+    email: string;
     password: string;
   }
 
-  const [user, setUser] = useState<User | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const [user, setUser] = useState<User | null>(null);
   const [userDetails, setUserDetails] = useState({
     name: '',
     email: '',
@@ -22,11 +26,10 @@ const UserProfile: React.FC = () => {
 
 
   useEffect(() => {
-    // Ivan Germano: Chamar a função para obter o usuário atual
     const getUser = async () => {
       const response = await getCurrentUser();
       if (response.success && response.user) {
-        setUser(response.user); // Ivan Germano: Define o usuário no estado
+        setUser(response.user);
       } else {
         console.error(response.message);
       }
@@ -41,7 +44,7 @@ const UserProfile: React.FC = () => {
       setUserDetails({
         name: user.name,
         email: user.email,
-        password: user.password
+        password: ""
       });
     }
   }, [user]);
@@ -49,21 +52,30 @@ const UserProfile: React.FC = () => {
 
 
 
-  const handleSaveChanges = () => {
-
+  const handleSaveChanges = async () => {
     
+    //salvar os userDetails
+    console.log("Atualizando usuário: ", {userDetails})
+    const result = await updateUser(userDetails, user.id)
+    console.log("Resultado da operação: ", result)
+
+
     // Save changes to the server or update state as needed
     setIsEditing(false);
   };
 
   const handleDeleteAccount = () => {
-    if (window.confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
+    if (window.confirm("Tem certeza que deseja deletar sua conta? Essa ação não pode ser desfeita!")) {
       // Handle account deletion logic
     }
   };
 
   const handleEditUser = () => {
     setIsEditing(true);
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -118,15 +130,28 @@ const UserProfile: React.FC = () => {
       <div className="mb-6">
         <label className="block font-semibold mb-2">Password</label>
         {isEditing ? (
-          <input
-            type="text"
-            name="password"
-            value={userDetails.password}
-            onChange={handleInputChange}
-            className="w-full p-2 bg-gray-700 rounded text-gray-200 focus:outline-none"
-          />
+          <div className="relative w-full">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              name="password"
+              value={userDetails.password}
+              onChange={handleInputChange}
+              className="w-full p-2 bg-gray-700 rounded text-gray-200 focus:outline-none"
+            />
+            <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400"
+            >
+              {showPassword ? (
+                <IoEyeSharp className="w-5 h-5" aria-hidden="true" />
+              ) : (
+                <IoEyeOutline className="w-5 h-5" aria-hidden="true" />
+              )}
+            </button>
+          </div>
         ) : (
-          <p className="p-2 bg-gray-700 rounded">{"•".repeat(userDetails.password.length)}</p>
+          <p className="p-2 bg-gray-700 rounded">{userDetails.password === "" ? "•".repeat(8) : "•".repeat(userDetails.password.length)}</p>
         )}
       </div>
 
