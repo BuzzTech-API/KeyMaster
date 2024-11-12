@@ -3,43 +3,33 @@ import PasswordCard from "../components/passwordCard";
 import { useEffect, useState } from "react";
 import PasswordDetailsPanel from "../components/passwordDetailsPannel";
 import { Password } from "../interfaces/password.interface";
-import { createPassword, deletePassword, getPasswords } from "../api/password";
+import { createPassword, deleteUserPassword, getUserPasswords } from "../api/password";
 import AddPasswordModal from "../components/addPasswordModal";
+import { useUser } from "../context/UserContext";
 
 const SavedPasswords: React.FC = () => {
+  //info do usuário
+  const { user } = useUser()
 
 
-
-
+  
   const [passwords, setPasswords] = useState<Password[]>([]);
-
-  //getAll no backend
-  const getAllPasswords = async () => {
-    const data = await getPasswords(); // Capture return
-    setPasswords(data); // Update state with fetched data
+  const userPasswords = async () => {
+    const data = await getUserPasswords(user.id); // Capture return
+    setPasswords(data); 
   };
   useEffect(() => {
-    getAllPasswords();
+    userPasswords();
   }, []);
 
 
 
-  // Modal de Criar nova senha
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleAddPasswordModal = () => setIsModalOpen(true);
-  const handleCloseAddPasswordModal = () => setIsModalOpen(false);
-
-  const handleSavePassword = async (title: string, login: string, password: string, creationDate: Date) => {
-    const passwordData = { title, login, password, creationDate }
-    await createPassword(passwordData)
-    getAllPasswords()
-  };
 
 
   const handleDeletePassword = async (id: number) => {
-    const success = await deletePassword(id);
-  
+    const success = await deleteUserPassword(id);
+
     if (success) {
       setPasswords((prevPasswords) => prevPasswords.filter((password) => password.id !== id));
     } else {
@@ -50,6 +40,26 @@ const SavedPasswords: React.FC = () => {
 
 
 
+
+
+
+
+  // Modal de Criar nova senha
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleCloseAddPasswordModal = () => setIsModalOpen(false);
+  const handleOpenAddPasswordModal = () => setIsModalOpen(true);
+
+  const handleSavePassword = async (title: string, login: string, password: string, creationDate: Date) => {
+    const passwordData = { title, login, password, creationDate }
+    await createPassword(passwordData, user.id)
+    userPasswords()
+  };
+
+
+
+  
+  
   // Painel de detalhes da senha
   const [selectedPassword, setSelectedPassword] = useState<number | null>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
@@ -63,13 +73,18 @@ const SavedPasswords: React.FC = () => {
   const handleClosePanel = () => {
     setIsPanelOpen(false);
   };
+  
 
+  //pega as infos da senha que foi selecionada para dispor no painel
   const selectedPasswordData = passwords.find((password) => password.id === selectedPassword);
+
+
+
 
   return (
     <div className="ml-56 flex-1 p-4 bg-blue-950 overflow-y-auto h-full scrollbar relative">
       <button className="flex items-center bg-white text-black font-semibold py-2 px-4 rounded mb-4 hover:bg-gray-400 ml-auto"
-        onClick={handleAddPasswordModal}
+        onClick={handleOpenAddPasswordModal}
       >
         <FaPlus className="mr-2" />
         Add New Password

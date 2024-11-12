@@ -5,26 +5,29 @@ import SavedPasswords from './pages/savedPasswords';
 import Sidebar from './components/sidebar';
 import Login from './pages/login';
 import UserProfile from './pages/userProfile';
+import { UserProvider } from './context/UserContext';
 
 
 
 const App = () => {
   //Estado inicial
-  const [activeScreen, setActiveScreen] = useState('home');
+  const [activeScreen, setActiveScreen] = useState('login');
 
   const handleLoginSuccess = () => {
     setActiveScreen('home');
   };
 
   return (
-    <div className="flex h-screen">
-      {/* refatoração, agora só chama o sidebar se a tela ativa não for Login, bem mais claro. */}
-      {activeScreen !== 'login' && <Sidebar setActiveScreen={setActiveScreen} />}
-      {activeScreen === 'login' && <Login onLoginSuccess={handleLoginSuccess} />}
-      {activeScreen === 'home' && (<Home />)}
-      {activeScreen === 'savedPasswords' && (<SavedPasswords />)}
-      {activeScreen === 'userProfile' && (<UserProfile />)}
-    </div>
+    <UserProvider>
+      <div className="flex h-screen">
+        {/* refatoração, agora só chama o sidebar se a tela ativa não for Login, bem mais claro. */}
+        {activeScreen === 'login' && <Login onLoginSuccess={handleLoginSuccess} />}
+        {activeScreen !== 'login' && <Sidebar setActiveScreen={setActiveScreen} />}
+        {activeScreen === 'home' && (<Home />)}
+        {activeScreen === 'savedPasswords' && (<SavedPasswords />)}
+        {activeScreen === 'userProfile' && (<UserProfile />)}
+      </div>
+    </UserProvider>
   );
 }
 
