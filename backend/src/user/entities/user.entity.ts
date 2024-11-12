@@ -24,7 +24,7 @@ export class User {
     @Column()
     userKey: string
 
-    @OneToMany(() => Password, (password) => password.user)
+    @OneToMany(() => Password, (password) => password.user,{ cascade: ['remove'] })
     passwords: Password[];
 
     @OneToMany(() => UserHasConsent, (uhc) => uhc.user)

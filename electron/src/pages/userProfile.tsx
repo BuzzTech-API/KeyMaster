@@ -9,6 +9,7 @@ import Condition from "../types/condition";
 import Checkbox from "../components/checkbox";
 import TermsAndCondition from "../components/termsAndCondition";
 import { updateUserHasConsent } from "../api/user_has_consent";
+import { deleteUser } from "../api/deleteUser";
 
 
 const UserProfile: React.FC = () => {
@@ -86,6 +87,10 @@ const UserProfile: React.FC = () => {
 
   const handleDeleteAccount = () => {
     if (window.confirm("Tem certeza que deseja deletar sua conta? Essa ação não pode ser desfeita!")) {
+
+      deleteUser(user.id)
+
+
       // Handle account deletion logic
     }
   };
