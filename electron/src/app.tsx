@@ -10,7 +10,7 @@ import UserProfile from './pages/userProfile';
 
 const App = () => {
   //Estado inicial
-  const [activeScreen, setActiveScreen] = useState('home');
+  const [activeScreen, setActiveScreen] = useState('login');
 
   const handleLoginSuccess = () => {
     setActiveScreen('home');
