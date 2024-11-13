@@ -7,7 +7,7 @@ export interface ConsentimentoInterface {
 
 export default class Consentimento {
   private _id: number;
-  private _text: string;
+  private _content: string;
   private _isOptional: boolean;
   private _termosCondicao_id: number;
 
@@ -18,11 +18,11 @@ export default class Consentimento {
     this._id = value;
   }
 
-  public get text(): string {
-    return this._text;
+  public get content(): string {
+    return this._content;
   }
-  public set text(value: string) {
-    this._text = value;
+  public set content(value: string) {
+    this._content = value;
   }
   public get isOptional(): boolean {
     return this._isOptional;
@@ -42,12 +42,12 @@ export default class Consentimento {
   constructor(id?: number, text?: string, isOptional?: boolean, termosCondicao_id?: number) {
     if (id && text &&  isOptional && termosCondicao_id) {
       this.id = id
-      this.text = text
+      this.content = text
       this.isOptional = isOptional
       this.termosCondicao_id = termosCondicao_id
     }else{
       this.id=0
-      this.text=''
+      this.content=''
       this.isOptional=true
       this.termosCondicao_id=0
     }
@@ -55,7 +55,7 @@ export default class Consentimento {
 
   public preencherPelaInterface(params:ConsentimentoInterface) {
       this.id = params.id
-      this.text = params.text
+      this.content = params.text
       this.isOptional = params.isOptional
       this.termosCondicao_id = params.termosCondicao_id
   }

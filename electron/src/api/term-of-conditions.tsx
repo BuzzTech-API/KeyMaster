@@ -1,6 +1,6 @@
 import { BACKEND_URL } from "../constants";
 
-export default async function CreateTermOfConditions(body: {
+async function CreateTermOfConditions(body: {
   pdfLink: string;
 }) {
   try {
@@ -17,3 +17,18 @@ export default async function CreateTermOfConditions(body: {
     console.error(error);
   }
 }
+
+
+export async function GetTermOfConditions() {
+  try {
+    const request = await fetch(BACKEND_URL + "term-of-condition", {
+      method: "get",
+    });
+
+    return request.json();
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export default CreateTermOfConditions; GetTermOfConditions;

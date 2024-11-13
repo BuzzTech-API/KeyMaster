@@ -1,7 +1,7 @@
 import { BACKEND_URL } from "../constants";
 
 export default async function CreateConsent(body: {
-  text: string;
+  content: string;
   isOptional: boolean;
   termOfCondition_id: number;
 }) {

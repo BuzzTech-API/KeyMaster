@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Checkbox from "../components/checkbox";
 import Modal from "../components/modal";
 import TermsAndCondition from "../components/termsAndCondition";
 import CreateUser from "../api/createUser";
+import { TermOfConditions } from "../types/termOfConditions";
+import { GetTermOfConditions } from "../api/term-of-conditions";
 
 interface Signpprops {
   setActiveScreen: React.Dispatch<React.SetStateAction<string>>; // Callback prop
@@ -21,6 +23,23 @@ const Signup: React.FC<Signpprops> = ({
   const [errorMessage, setErrorMessage] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [checked, setChecked] = useState(false);
+  const [termOfConditions, setTermOfConditions] = useState<TermOfConditions>(new TermOfConditions())
+  useEffect(()=>{
+    (async () => {
+     const getTerms = await GetTermOfConditions()
+     const newTerm = new TermOfConditions()
+    newTerm.id = getTerms.id
+    newTerm.isValid = getTerms.isValid
+    newTerm.pdfLink = getTerms.pdfLink
+    newTerm.aplicationDate = getTerms.aplicationDate
+    newTerm.consents = getTerms.consent
+    setTermOfConditions(newTerm)
+    console.log(getTerms);
+    console.log(termOfConditions); 
+    })();
+    
+    
+  },[])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -113,16 +132,23 @@ const Signup: React.FC<Signpprops> = ({
               Termos e condições
             </span>
           </div>
+
+          {termOfConditions.consents!== undefined && termOfConditions.consents.map((consent)=>{
+return(
           <Checkbox
-            checked={checked}
-            required
+            checked={false}
+            required={consent.isOptional ? false : true}
             onChange={function(check): void {
               setChecked(check);
             }}
           >
-            <span>Você aceita os </span>
+            {consent.content}
           </Checkbox>
-          <TermsAndCondition isOpen={isOpen} setIsOpen={setIsOpen} />
+)
+}
+          )}
+
+          <TermsAndCondition isOpen={isOpen}  pdfLink={termOfConditions.pdfLink!== undefined? termOfConditions.pdfLink : ''} setIsOpen={setIsOpen} />
           {/* Submit Button */}
           <button
             type="submit"

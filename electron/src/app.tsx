@@ -8,7 +8,7 @@ import Signup from "./pages/singup";
 import CadastroTermo from "./pages/termoCadastro";
 
 const App = () => {
-  const [activeScreen, setActiveScreen] = useState("signup");
+  const [activeScreen, setActiveScreen] = useState("login");
 
   return (
     <div className="flex h-screen">

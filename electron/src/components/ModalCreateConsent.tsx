@@ -9,7 +9,7 @@ type Props = {
 };
 
 interface ConsentimentoCreate {
-  text: string;
+  content: string;
   isOptional: boolean;
 }
 export const ModalCreateConsent: React.FC<Props> = ({
@@ -18,7 +18,7 @@ export const ModalCreateConsent: React.FC<Props> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [consentData, setConsentData] = useState<ConsentimentoCreate>({
-    text: "",
+    content: "",
     isOptional: false,
   });
   function onClose() {
@@ -44,11 +44,11 @@ export const ModalCreateConsent: React.FC<Props> = ({
               className="w-full py-3 mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition duration-300"
               onClick={() => {
                 const newConsent = new Consentimento();
-                newConsent.text = consentData.text;
+                newConsent.content = consentData.content;
                 newConsent.isOptional = consentData.isOptional;
                 setConsentimentos(consentimentos.concat(newConsent));
                 setConsentData({
-                  text: "",
+                  content: "",
                   isOptional: false,
                 });
                 onClose();
@@ -74,11 +74,11 @@ export const ModalCreateConsent: React.FC<Props> = ({
             id="text"
             type="text"
             className="w-full px-4 py-2 mt-2 text-gray-300 bg-gray-700 border border-gray-600 rounded focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition duration-300"
-            value={consentData.text}
+            value={consentData.content}
             onChange={(e) =>
               setConsentData({
                 ...consentData,
-                text: e.target.value,
+                content: e.target.value,
               })
             }
             required

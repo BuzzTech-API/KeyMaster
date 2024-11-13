@@ -22,7 +22,7 @@ export default function CadastroTermo({ }: props) {
       const fetchConsents = await Promise.all(
         consentimentos.map((consentimento) => {
           return CreateConsent({
-            text: consentimento.text,
+            content: consentimento.content,
             isOptional: consentimento.isOptional,
             termOfCondition_id: responseTerm.id,
           });
@@ -73,7 +73,7 @@ export default function CadastroTermo({ }: props) {
                   onChange={function(check): void { }}
                 >
                   <span>
-                    {consent.text}{" "}
+                    {consent.content}{" "}
                     {consent.isOptional ? (
                       <></>
                     ) : (
