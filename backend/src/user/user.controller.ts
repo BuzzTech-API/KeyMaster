@@ -8,6 +8,7 @@ import { GetUserDTO } from './dto/get-user.dto';
 import { Request, Response } from 'express';
 import { Logger } from '../utils/Logger';
 import { SessionService } from '../session/services/session.service';
+import { GetUserDTO } from './dto/get-user.dto';
 
 @Controller('user')
 export class UserController {

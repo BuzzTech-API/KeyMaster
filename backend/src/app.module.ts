@@ -20,12 +20,13 @@ import { SessionMiddleware } from './session/services/session.middleware';
 import { MongooseModule } from '@nestjs/mongoose';
 import { BlacklistModule } from './blacklist/blacklist.module';
 
+
 @Module({
   imports: [
     MongooseModule.forRoot('mongodb://localhost:27017/blacklist'),
     TypeOrmModule.forRoot({
       type: 'postgres', // or your database type
-      host: 'db',
+      host: 'localhost',
       port: 5432,
       username: 'postgres',
       password: 'Senha123#',
@@ -49,6 +50,8 @@ import { BlacklistModule } from './blacklist/blacklist.module';
     UserHasConsentModule,
     ConsentUpdateModule,
     BlacklistModule,
+    UserHasConsentModule,
+    ConsentUpdateModule,
   ],
   controllers: [AppController],
   providers: [AppService],

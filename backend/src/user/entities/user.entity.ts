@@ -2,7 +2,7 @@ import { Password } from 'src/password/entities/password.entity';
 import { UserHasConsent } from 'src/user_has_consent/entities/user_has_consent.entity';
 import { Session } from '../../session/entities/session.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-
+import { UserHasConsent } from 'src/user_has_consent/entities/user_has_consent.entity';
 
 @Entity()
 export class User {
@@ -35,4 +35,6 @@ export class User {
     @OneToMany(() => Session, session => session.user, { cascade: true }) // Relacionamento com Session
     sessions: Session[];
 
+    @OneToMany(() => UserHasConsent, (uhc) => uhc.user)
+    consent: UserHasConsent[];
 }

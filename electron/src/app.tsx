@@ -15,6 +15,7 @@ import { TermProvider } from './context/TermsContext';
 const App = () => {
   const [activeScreen, setActiveScreen] = useState("login");
 
+
   return (
     <UserProvider>
       <TermProvider>
@@ -39,6 +40,7 @@ const App = () => {
     </UserProvider>
   )
 };
+
 function render() {
   const root = ReactDOM.createRoot(document.getElementById("app"));
   root.render(<App />);

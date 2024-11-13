@@ -16,6 +16,8 @@ import { Logger } from '../../utils/Logger';
 import * as fs from 'fs';
 import * as path from 'path';
 import { userInfo } from 'os';
+import { GetUserDTO } from '../dto/get-user.dto';
+import { UserHasConsent } from 'src/user_has_consent/entities/user_has_consent.entity';
 
 @Injectable()
 export class UserService {
@@ -46,6 +48,13 @@ export class UserService {
     });
   }
 
+
+  async getConsentimentosPorUsuario(usuarioId: number) {
+    return this.userHasConsentRepository.find({
+      where: { user_id: usuarioId },
+      relations: ['consent'],
+    });
+  }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     // Ivan Germano: Aqui definimos a variavel 'hashedPassword para usar o serviço de criptografia com a função 'hashedPassword'.
@@ -241,6 +250,13 @@ export class UserService {
     }
   }
 
+
+  async remove(id: number): Promise<User> {
+    const user = await this.findOne(id);
+    return await this.userRepository.remove(user)
+  }
+
+
   // Ivan Germano: Função de login para verificar as credenciais do usuário e criar uma sessão.
   async login(loginUserDto: LoginUserDto): Promise<{ user: User; sessionToken: string }> {
     const { email, password } = loginUserDto;
@@ -273,5 +289,6 @@ export class UserService {
 
   async logout(sessionToken: string): Promise<void> {
     await this.sessionService.invalidateSession(sessionToken);
+
   }
 }

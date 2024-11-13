@@ -86,6 +86,7 @@ const Signup: React.FC<Signpprops> = ({
           </button>
         </div>
 
+
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Name Input */}
           <div>
@@ -176,6 +177,7 @@ const Signup: React.FC<Signpprops> = ({
           )}
 
           <TermsAndCondition isOpen={isOpen}  pdfLink={termOfConditions.pdfLink!== undefined? termOfConditions.pdfLink : ''} setIsOpen={setIsOpen} />
+
 
           {/* Submit Button */}
           <button
