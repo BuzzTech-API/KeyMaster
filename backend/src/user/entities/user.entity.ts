@@ -1,10 +1,9 @@
-import { Password } from "src/password/entities/password.entity";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-
+import { Password } from 'src/password/entities/password.entity';
+import { UserHasConsent } from 'src/user_has_consent/entities/user_has_consent.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class User {
-
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -16,14 +15,14 @@ export class User {
     email: string;
 
     @Column()
-    name: string
+    name: string;
 
     @Column()
-    password: string
+    password: string;
 
     @OneToMany(() => Password, (password) => password.user)
     passwords: Password[];
 
-
-
+    @OneToMany(() => UserHasConsent, (uhc) => uhc.user)
+    consent: UserHasConsent[];
 }

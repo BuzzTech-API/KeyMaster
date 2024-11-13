@@ -4,6 +4,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { User } from './entities/user.entity';
+import { GetUserDTO } from './dto/get-user.dto';
 
 @Controller('user')
 export class UserController {
@@ -17,7 +18,7 @@ export class UserController {
 
   // Ivan Germano: Rota responsável pelo login do usuário
   @Post('login')
-  async login(@Body() loginUserDto: LoginUserDto): Promise<User> {
+  async login(@Body() loginUserDto: LoginUserDto): Promise<GetUserDTO> {
       console.log('Recebendo requisição de login:', loginUserDto);
       return await this.userService.login(loginUserDto);
   }

@@ -6,20 +6,34 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entities/user.entity';
 import { Repository } from 'typeorm';
 import { EncryptionService } from './encryption.service';
+import { GetUserDTO } from '../dto/get-user.dto';
+import { UserHasConsent } from 'src/user_has_consent/entities/user_has_consent.entity';
 
 @Injectable()
 export class UserService {
-
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+
+    @InjectRepository(UserHasConsent)
+    private readonly userHasConsentRepository: Repository<UserHasConsent>,
+
     // Ivan Germano: Aqui estamos injetando nosso serviço de criptografia em UserService.
-    private readonly encryptionService: EncryptionService 
-  ){}
+    private readonly encryptionService: EncryptionService,
+  ) { }
+
+  async getConsentimentosPorUsuario(usuarioId: number) {
+    return this.userHasConsentRepository.find({
+      where: { user_id: usuarioId },
+      relations: ['consent'],
+    });
+  }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     // Ivan Germano: Aqui definimos a variavel 'hashedPassword para usar o serviço de criptografia com a função 'hashedPassword'.
-    const hashedPassword = await this.encryptionService.hashPassword(createUserDto.password);
+    const hashedPassword = await this.encryptionService.hashPassword(
+      createUserDto.password,
+    );
     createUserDto.password = hashedPassword;
 
     const userData = await this.userRepository.save(createUserDto);
@@ -27,35 +41,30 @@ export class UserService {
   }
 
   async findAll(): Promise<User[]> {
-    return await this.userRepository.find()
+    return await this.userRepository.find();
   }
 
   async findOne(id: number): Promise<User> {
-    const userData = await this.userRepository.findOneBy({id})
+    const userData = await this.userRepository.findOneBy({ id });
     if (!userData) {
-      throw new HttpException(
-        'User not found!', 404
-      )
+      throw new HttpException('User not found!', 404);
     }
-    return userData
+    return userData;
   }
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
-    const user = await this.findOne(id)
-    const userData = this.userRepository.merge(
-      user,
-      updateUserDto
-    )
-    return await this.userRepository.save(userData)
+    const user = await this.findOne(id);
+    const userData = this.userRepository.merge(user, updateUserDto);
+    return await this.userRepository.save(userData);
   }
 
   async remove(id: number): Promise<User> {
-    const user = await this.findOne(id)
-    return await this.userRepository.remove(user)
+    const user = await this.findOne(id);
+    return await this.userRepository.remove(user);
   }
 
   // Ivan Germano: Função de login para verificar as credenciais do usuário
-  async login(loginUserDto: LoginUserDto): Promise<User> {
+  async login(loginUserDto: LoginUserDto): Promise<GetUserDTO> {
     const { email, password } = loginUserDto;
 
     // Ivan Germano: Aqui verifica se o email digitado existe no banco de dados.
@@ -63,20 +72,27 @@ export class UserService {
     const user = await this.userRepository.findOne({ where: { email } });
 
     if (!user) {
-      console.log("Email INCORRETO ou não existe!");
+      console.log('Email INCORRETO ou não existe!');
       throw new HttpException('Email INCORRETO ou não existe!', 401);
     }
 
     // Ivan Germano: Aqui verifica se a senha corresponde a criptografia.
-    const isPasswordValid = await this.encryptionService.comparePasswords(password, user.password);
+    const isPasswordValid = await this.encryptionService.comparePasswords(
+      password,
+      user.password,
+    );
     console.log('Senha válida?', isPasswordValid); // Verificar validação de senha
     if (!isPasswordValid) {
-      console.log("Senha INCORRETA!");
+      console.log('Senha INCORRETA!');
       throw new HttpException('Senha INCORRETA!', 401);
     }
     // Ivan Germano: Retorna o usuário em caso de sucesso
     console.log('Login bem-sucedido para usuário:', user.email);
-    console.log(user)
-    return user; 
+    console.log(user);
+    return {
+      name: user.name,
+      email: user.email,
+      isSuperUser: user.isSuperUser,
+    };
   }
 }

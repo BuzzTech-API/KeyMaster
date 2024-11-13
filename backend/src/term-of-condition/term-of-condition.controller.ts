@@ -1,11 +1,21 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { TermOfConditionService } from './term-of-condition.service';
 import { CreateTermOfConditionDto } from './dto/create-term-of-condition.dto';
 import { UpdateTermOfConditionDto } from './dto/update-term-of-condition.dto';
 
 @Controller('term-of-condition')
 export class TermOfConditionController {
-  constructor(private readonly termOfConditionService: TermOfConditionService) {}
+  constructor(
+    private readonly termOfConditionService: TermOfConditionService,
+  ) {}
 
   @Post()
   create(@Body() createTermOfConditionDto: CreateTermOfConditionDto) {
@@ -23,7 +33,10 @@ export class TermOfConditionController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTermOfConditionDto: UpdateTermOfConditionDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateTermOfConditionDto: UpdateTermOfConditionDto,
+  ) {
     return this.termOfConditionService.update(+id, updateTermOfConditionDto);
   }
 

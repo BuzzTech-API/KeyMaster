@@ -10,26 +10,40 @@ import { Consent } from './consent/entities/consent.entity';
 import { Password } from './password/entities/password.entity';
 import { User } from './user/entities/user.entity';
 import { TermOfCondition } from './term-of-condition/entities/term-of-condition.entity';
+import { UserHasConsentController } from './user_has_consent/user_has_consent.controller';
+import { ConsentUpdateController } from './consent_update/consent_update.controller';
+import { UserHasConsent } from './user_has_consent/entities/user_has_consent.entity';
+import { ConsentUpdate } from './consent_update/entities/consent_update.entity';
+import { UserHasConsentModule } from './user_has_consent/user_has_consent.module';
+import { ConsentUpdateModule } from './consent_update/consent_update.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres', // or your database type
-      host: 'db',
+      host: 'localhost',
       port: 5432,
       username: 'postgres',
       password: 'Senha123#',
       database: 'keymaster',
-      entities: [User, Password, Consent, TermOfCondition],
+      entities: [
+        User,
+        Password,
+        Consent,
+        TermOfCondition,
+        UserHasConsent,
+        ConsentUpdate,
+      ],
       synchronize: true,
     }),
     UserModule,
     PasswordModule,
     ConsentModule,
-    TermOfConditionModule],
+    TermOfConditionModule,
+    UserHasConsentModule,
+    ConsentUpdateModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
-
-
-export class AppModule { }
+export class AppModule {}

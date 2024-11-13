@@ -1,15 +1,22 @@
-import React from 'react';
+import React from "react";
 
 interface CheckboxProps {
   checked: boolean;
+  className?: string;
   onChange: (checked: boolean) => void;
   children: React.ReactNode;
-  required?: boolean
+  required?: boolean;
 }
 
-const Checkbox: React.FC<CheckboxProps> = ({ checked, onChange, children, required = false }) => {
+const Checkbox: React.FC<CheckboxProps> = ({
+  checked,
+  className = "flex items-center",
+  onChange,
+  children,
+  required = false,
+}) => {
   return (
-    <div className="flex items-center">
+    <div className={className}>
       <input
         type="checkbox"
         required={required}

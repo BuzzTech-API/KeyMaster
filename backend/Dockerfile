@@ -12,4 +12,4 @@ RUN npm run build
 
 RUN chown -R node:node /usr/src/app/dist
 
-EXPOSE 5000
+EXPOSE 8000
