@@ -45,7 +45,6 @@ const UserProfile: React.FC<{setActiveScreen: (screen: string) => void}> = ({ se
     email: user.email,
     password: ''
   });
-
   
   //Edição de Usuário
   const [isEditing, setIsEditing] = useState(false);
@@ -57,7 +56,6 @@ const UserProfile: React.FC<{setActiveScreen: (screen: string) => void}> = ({ se
 
     e.preventDefault()
   
-
     const updatedUserDetails = { ...userDetails };
 
     //Se o usuário não colocar senha ela não sera alterada
@@ -118,9 +116,6 @@ const UserProfile: React.FC<{setActiveScreen: (screen: string) => void}> = ({ se
   };
 
   return (
-
-
-
     <div className="ml-56 flex-grow flex flex-col bg-gray-900 text-white p-16">
       <div className="flex justify-between">
 
@@ -258,4 +253,4 @@ const UserProfile: React.FC<{setActiveScreen: (screen: string) => void}> = ({ se
   );
 }
 
-export default UserProfile
+export default UserProfile;

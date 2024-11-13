@@ -43,7 +43,6 @@ const Signup: React.FC<Signpprops> = ({
       setTermOfConditions(newTerm)
     })();
 
-
   },[])
 
   const handleSubmit = async (e: React.FormEvent) => {
