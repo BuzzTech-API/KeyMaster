@@ -45,7 +45,8 @@ export class AppModule {
       .apply(SessionMiddleware)
       .exclude(
         { path: 'user/login', method: RequestMethod.POST },
-        { path: 'user/create', method: RequestMethod.POST }
+        { path: 'user/create', method: RequestMethod.POST }, //Ivan Germano: Exclui a rota de CREATE USER do middleware de sessão
+        { path: 'user/:id', method: RequestMethod.DELETE } // Ivan Germano: Exclui a rota de DELETE do middleware de sessão - DESCOMENTAR APENAS PARA TESTES
       )
       .forRoutes({ path: '*', method: RequestMethod.ALL });
   }

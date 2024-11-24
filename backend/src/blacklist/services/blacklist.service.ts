@@ -7,9 +7,10 @@ import { Blacklist } from '../interfaces/blacklist.interface';
 export class BlacklistService {
   constructor(@InjectModel('Blacklist') private readonly blacklistModel: Model<Blacklist>) {}
 
-  async addToBlacklist(userId: string): Promise<Blacklist> {
+  async addUserToBlacklist(userId: string): Promise<Blacklist> {
     const deletedAt = new Date();
     const blacklistEntry = new this.blacklistModel({ userId, deletedAt });
+    console.log(`Usuário ${userId}, adicionado a blacklist`);
     return await blacklistEntry.save();
   }
 
