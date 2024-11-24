@@ -17,11 +17,14 @@ import { ConsentUpdateModule } from './consent_update/consent_update.module';
 import { SessionModule } from './session/session.module';
 import { Session } from './session/entities/session.entity';
 import { SessionMiddleware } from './session/services/session.middleware';
+import { MongooseModule } from '@nestjs/mongoose';
+import { BlacklistModule } from './blacklist/blacklist.module';
 
 @Module({
   imports: [
+    MongooseModule.forRoot('mongodb://localhost:27017/blacklist'),
     TypeOrmModule.forRoot({
-      type: 'postgres', // or your database type
+      type: 'postgres',
       host: 'localhost',
       port: 5432,
       username: 'postgres',
@@ -45,21 +48,24 @@ import { SessionMiddleware } from './session/services/session.middleware';
     TermOfConditionModule,
     UserHasConsentModule,
     ConsentUpdateModule,
+    BlacklistModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
-      .apply(SessionMiddleware) //Ivan Germano: Aplicando o middleware
+      .apply(SessionMiddleware)
       .exclude(
         { path: 'user/login', method: RequestMethod.POST }, //Ivan Germano: Exclui a rota de login do middleware de sessão
         { path: 'user/create', method: RequestMethod.POST }, //Ivan Germano: Exclui a rota de create do middleware, útil para testes no postman
         { path: 'term-of-condition', method: RequestMethod.GET }, //Ivan Germano: Exclui a rota de create do middleware, útil para testes no postman
         { path: 'user-has-consent', method: RequestMethod.POST }, //Ivan Germano: Exclui a rota de create do middleware, útil para testes no postman
       )
-      .forRoutes({ path: '*', method: RequestMethod.ALL }); //Ivan Germano: Define as rotas que devem ser protegidas
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
   }
 }
+
+
+
