@@ -46,6 +46,7 @@ export class UserService {
     });
   }
 
+
   async create(createUserDto: CreateUserDto): Promise<User> {
     // Ivan Germano: Aqui definimos a variavel 'hashedPassword para usar o serviço de criptografia com a função 'hashedPassword'.
     const hashedPassword = await this.encryptionService.hashPassword(
@@ -90,7 +91,6 @@ export class UserService {
     return await this.userRepository.save(userData)
   }
 
-  
   // async remove(id: number): Promise<User> {
   //   const user = await this.findOne(id)
   //   return await this.userRepository.remove(user)
@@ -116,6 +116,7 @@ export class UserService {
       await this.blacklistService.addUserToBlacklist(userId);
  
       // console.log(`Usuário ${userId}, removido com sucesso`);
+
     } catch (error) {
       console.error('Erro ao excluir o usuário:', error.message);
       throw new HttpException('Erro ao excluir o usuário', 500);
