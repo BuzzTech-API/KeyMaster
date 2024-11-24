@@ -6,10 +6,12 @@ import { User } from './entities/user.entity';
 import { EncryptionService } from './services/encryption.service';
 import { SessionModule } from '../session/session.module';
 import { PasswordEncryptionService } from 'src/password/services/passwordEncryption.service';
+import { BlacklistModule } from 'src/blacklist/blacklist.module';
 
 @Module({
   imports:[TypeOrmModule.forFeature([User]),
   forwardRef(() => SessionModule),
+  BlacklistModule,
 ],
   controllers: [UserController],
   providers: [UserService,  EncryptionService, PasswordEncryptionService],
