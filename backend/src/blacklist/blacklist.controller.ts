@@ -7,7 +7,7 @@ export class BlacklistController {
 
   @Post()
   async addToBlacklist(@Body('userId') userId: string) {
-    return await this.blacklistService.addToBlacklist(userId);
+    return await this.blacklistService.addUserToBlacklist(userId);
   }
 
   @Get(':userId')

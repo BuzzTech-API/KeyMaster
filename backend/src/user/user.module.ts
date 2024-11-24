@@ -8,10 +8,12 @@ import { UserHasConsent } from 'src/user_has_consent/entities/user_has_consent.e
 
 import { SessionModule } from '../session/session.module';
 import { PasswordEncryptionService } from 'src/password/services/passwordEncryption.service';
+import { BlacklistModule } from 'src/blacklist/blacklist.module';
 
 @Module({
   imports:[TypeOrmModule.forFeature([User, UserHasConsent]),
   forwardRef(() => SessionModule),
+  BlacklistModule,
 ],
   controllers: [UserController],
   providers: [UserService,  EncryptionService, PasswordEncryptionService],

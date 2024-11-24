@@ -11,6 +11,7 @@ import { UserHasConsent } from 'src/user_has_consent/entities/user_has_consent.e
 import { SessionService } from '../../session/services/session.service'; // Ivan Germano: Importando o serviço de sessão
 import * as crypto from 'crypto';
 import { PasswordEncryptionService } from 'src/password/services/passwordEncryption.service';
+import { BlacklistService } from '../../blacklist/services/blacklist.service';  // Ivan Germano: Importando o serviço responsável pela BlackList
 
 @Injectable()
 export class UserService {
@@ -28,8 +29,10 @@ export class UserService {
     private readonly sessionService: SessionService,
 
     // Lemon: Aqui estamos injetando nosso serviço de critografia em PasswordService
-    private readonly passwordEncryptionService: PasswordEncryptionService
+    private readonly passwordEncryptionService: PasswordEncryptionService,
 
+    // Ivan Germano: Aqui estamos injetando o serviço de blacklisting em UserService.
+    private readonly blacklistService: BlacklistService, // Injetar o BlacklistService para registrar o usuário excluído
   ) { }
 
   async getConsentimentosPorUsuario(usuarioId: number) {
@@ -83,9 +86,33 @@ export class UserService {
     return await this.userRepository.save(userData)
   }
 
-  async remove(id: number): Promise<User> {
-    const user = await this.findOne(id);
-    return await this.userRepository.remove(user);
+  
+  // async remove(id: number): Promise<User> {
+  //   const user = await this.findOne(id)
+  //   return await this.userRepository.remove(user)
+  // }
+
+  // Ivan Germano: Função de exclusão física do usuário e adição do usuário a blacklist no MongoDB
+  async deleteUser(userId: number): Promise<void> {
+    try {
+      // Ivan Germano: Procurar pelo usuário para confirmar a existência
+      const user = await this.userRepository.findOne({ where: { id: userId } });
+
+      if (!user) {
+        throw new HttpException('User not found', 404);
+      }
+
+      // Ivan Germano: Remover o usuário do banco de dados
+      await this.userRepository.remove(user);
+
+      // Ivan Germano: Registrar o usuário excluído na blacklist (MongoDB)
+      await this.blacklistService.addUserToBlacklist(String(userId));
+      
+      console.log(`Usuário ${userId}, ${user.name} removido com sucesso`);
+    } catch (error) {
+      console.error('Erro ao excluir o usuário:', error.message);
+      throw new HttpException('Erro ao excluir o usuário', 500);
+    }
   }
 
   // Ivan Germano: Função de login para verificar as credenciais do usuário e criar uma sessão
