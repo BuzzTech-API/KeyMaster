@@ -13,11 +13,14 @@ import { TermOfCondition } from './term-of-condition/entities/term-of-condition.
 import { SessionModule } from './session/session.module';
 import { Session } from './session/entities/session.entity';
 import { SessionMiddleware } from './session/services/session.middleware';
+import { MongooseModule } from '@nestjs/mongoose';
+import { BlacklistModule } from './blacklist/blacklist.module';
 
 @Module({
   imports: [
+    MongooseModule.forRoot('mongodb://localhost:27017/blacklist'),
     TypeOrmModule.forRoot({
-      type: 'postgres', // or your database type
+      type: 'postgres',
       host: 'localhost',
       port: 5432,
       username: 'admin',
@@ -30,20 +33,23 @@ import { SessionMiddleware } from './session/services/session.middleware';
     PasswordModule,
     ConsentModule,
     SessionModule,
-    TermOfConditionModule],
+    TermOfConditionModule,
+    BlacklistModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
-
-
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
-      .apply(SessionMiddleware) //Ivan Germano: Aplicando o middleware
+      .apply(SessionMiddleware)
       .exclude(
-        { path: 'user/login', method: RequestMethod.POST }, //Ivan Germano: Exclui a rota de login do middleware de sessão
-        { path: 'user/create', method: RequestMethod.POST } //Ivan Germano: Exclui a rota de create do middleware, útil para testes no postman
+        { path: 'user/login', method: RequestMethod.POST },
+        { path: 'user/create', method: RequestMethod.POST }
       )
-      .forRoutes({ path: '*', method: RequestMethod.ALL }); //Ivan Germano: Define as rotas que devem ser protegidas
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
   }
 }
+
+
+
