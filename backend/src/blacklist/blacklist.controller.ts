@@ -6,17 +6,17 @@ export class BlacklistController {
   constructor(private readonly blacklistService: BlacklistService) {}
 
   @Post()
-  async addToBlacklist(@Body('userId') userId: string) {
+  async addToBlacklist(@Body('userId') userId: number) {
     return await this.blacklistService.addUserToBlacklist(userId);
   }
 
   @Get(':userId')
-  async checkIfUserIsBlacklisted(@Param('userId') userId: string) {
+  async checkIfUserIsBlacklisted(@Param('userId') userId: number) {
     return await this.blacklistService.isUserBlacklisted(userId);
   }
 
   @Get()
   async getAllBlacklistedUsers() {
-    return await this.blacklistService.getBlacklistedUsers();
+    return await this.blacklistService.getAllBlacklistedUsers();
   }
 }

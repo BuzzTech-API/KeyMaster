@@ -17,6 +17,13 @@ export class UserController {
       return await this.userService.create(createUserDto);
   }
 
+  // Ivan Germano: Rota para teste de sanitização dos dados no BD relacional.
+  @Post('sanitize')
+  async sanitizeData(): Promise<string> {
+    await this.userService.sanitizeRestoredData();
+    return 'Sanitização concluída com sucesso';
+  }
+
   // Ivan Germano: Rota responsável pelo login do usuário
   @Post('login')
   async login(

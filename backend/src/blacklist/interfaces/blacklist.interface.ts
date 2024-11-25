@@ -1,6 +1,6 @@
 import { Document } from 'mongoose';
 
 export interface Blacklist extends Document {
-  userId: string;
+  userId: number;
   deletedAt: Date;
 }
