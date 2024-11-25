@@ -7,7 +7,9 @@ import { Logger } from './utils/Logger';
 
 // Ivan Germano: Essas configurações abaixo sobre "Logger" server para ativar/desativar logs que aparecer no console do backend
 // Isso vai permitir criar logs de debug ao mesmo tempo que não deixa o console "poluído" de informações.
-Logger.enableCategory('blacklist');
+// .disableCategory = Oculta os logs de uma categoria
+// .enableCategory = Ativa os logs de uma categoria
+Logger.disableCategory('blacklist');
 Logger.disableCategory('session');
 Logger.disableCategory('login');
 
