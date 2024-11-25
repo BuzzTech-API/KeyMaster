@@ -131,6 +131,7 @@ export class UserService {
     const logFilePath = path.resolve(process.cwd(), 'logs', 'deletion_log.json');
     // Ivan Germano: Log de debug para verificar o caminho que está sendo gerado.
     Logger.log('blacklist', `Caminho absoluto para o arquivo de log: , {logFilePath}`);
+
     const logEntry = {
       userId: user.id,
       deletedAt: new Date().toISOString(),
