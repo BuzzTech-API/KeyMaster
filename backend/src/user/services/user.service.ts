@@ -13,6 +13,7 @@ import { BlacklistService } from '../../blacklist/services/blacklist.service';  
 import { Logger } from '../../utils/Logger';
 import * as fs from 'fs';
 import * as path from 'path';
+import { userInfo } from 'os';
 
 @Injectable()
 export class UserService {
@@ -243,13 +244,11 @@ export class UserService {
       throw new HttpException('Senha INCORRETA!', 401);
     }
     // Ivan Germano: Retorna o usuário em caso de sucesso
-    Logger.log('login',`Login bem-sucedido para usuário:', ${user.email}`);
+    Logger.log('login',`Login bem-sucedido para usuário: ${user.email}`);
 
      // Ivan Germano: Após o login bem sucedido criar uma sessão e retornar o token
     const sessionToken = await this.sessionService.createSession(user.id);
-    Logger.log('session', `Sessão criada com token: , ${sessionToken}`);
-
-    Logger.log('login',`${user}`)
+    Logger.log('session', `Sessão criada com token: ${sessionToken}`);
     return {user, sessionToken}; 
   }
 
