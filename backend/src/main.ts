@@ -3,6 +3,13 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
+import { Logger } from './utils/Logger';
+
+// Ivan Germano: Essas configurações abaixo sobre "Logger" server para ativar/desativar logs que aparecer no console do backend
+// Isso vai permitir criar logs de debug ao mesmo tempo que não deixa o console "poluído" de informações.
+Logger.enableCategory('blacklist');
+Logger.disableCategory('session');
+Logger.disableCategory('login');
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

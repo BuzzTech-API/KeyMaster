@@ -12,6 +12,7 @@ import { SessionService } from '../../session/services/session.service'; // Ivan
 import * as crypto from 'crypto';
 import { PasswordEncryptionService } from 'src/password/services/passwordEncryption.service';
 import { BlacklistService } from '../../blacklist/services/blacklist.service';  // Ivan Germano: Importando o serviço responsável pela BlackList
+import { Logger } from '../../utils/Logger';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -101,7 +102,7 @@ export class UserService {
       const user = await this.userRepository.findOne({ where: { id: userId } });
 
       if (!user) {
-        throw new HttpException('User not found', 404);
+        throw new HttpException('Usuário não encontrado.', 404);
       }
 
       // Ivan Germano: Registro no log de exclusão local
@@ -113,7 +114,7 @@ export class UserService {
       // Ivan Germano: Registrar o usuário excluído na blacklist (MongoDB)
       await this.blacklistService.addUserToBlacklist(userId);
  
-      console.log(`Usuário ${userId}, removido com sucesso`);
+      // console.log(`Usuário ${userId}, removido com sucesso`);
     } catch (error) {
       console.error('Erro ao excluir o usuário:', error.message);
       throw new HttpException('Erro ao excluir o usuário', 500);
@@ -125,7 +126,7 @@ export class UserService {
     // Ivan Germano: Aqui estamos ajustando o caminho para garantir que ele aponte para a raiz do backend de forma arbitrária.
     const logFilePath = path.resolve(process.cwd(), 'logs', 'deletion_log.json');
     // Ivan Germano: Log de debug para verificar o caminho que está sendo gerado.
-    console.log('Caminho absoluto para o arquivo de log:', logFilePath);
+    Logger.log('blacklist', `Caminho absoluto para o arquivo de log: , {logFilePath}`);
 
     const logEntry = {
       userId: user.id,
@@ -151,7 +152,7 @@ export class UserService {
         fs.mkdirSync(path.dirname(logFilePath), { recursive: true });
         fs.writeFileSync(logFilePath, JSON.stringify([logEntry], null, 2));
       }
-      console.log(`Log de exclusão do usuário ${user.id} salvo com sucesso.`);
+      Logger.log('blacklist', `Log de exclusão do usuário ${user.id} salvo com sucesso.`);
     } catch (error) {
       console.error('Erro ao salvar o log de exclusão:', error.message);
     }
@@ -162,7 +163,7 @@ export class UserService {
     const logFilePath = path.resolve(process.cwd(), 'logs', 'deletion_log.json');
 
     if (!fs.existsSync(logFilePath)) {
-      console.log('Arquivo de log de deleção não encontrado.');
+      Logger.log('blacklist', 'Arquivo de log de deleção não encontrado.');
       return [];
     }
 
@@ -186,7 +187,8 @@ export class UserService {
       // Ivan Germano: Aqui a função tenta obter todos os usuários na blacklist do MongoDB
       try {
         blacklistedUsersFromDB = await this.blacklistService.getAllBlacklistedUsers();
-        console.log('Usuários obtidos do MongoDB.');
+        Logger.log('blacklist', 'Usuários obtidos do MongoDB.');
+
       } catch (error) {
         console.error('Erro ao obter usuários da blacklist do MongoDB:', error.message);
       }
@@ -194,7 +196,7 @@ export class UserService {
       // Ivan Germano: Aqui a função tentar obter usuários do arquivo de log de deleção - Redundancia atuando como função de FallBack
       try {
         blacklistedUsersFromLog = await this.getDeletedUsersFromLog();
-        console.log('Usuários obtidos do arquivo de log de deleção.');
+        Logger.log('blacklist', 'Usuários obtidos do arquivo de log de deleção.');
       } catch (error) {
         console.error('Erro ao ler o arquivo de log de deleção:', error.message);
       }
@@ -206,7 +208,7 @@ export class UserService {
       ]);
 
       if (allBlacklistedUserIds.size === 0) {
-        console.log('Nenhum usuário na blacklist. Não há necessidade de sanitização.');
+        Logger.log('blacklist', 'Nenhum usuário na blacklist. Não há necessidade de sanitização.');
         return;
       }
 
@@ -218,17 +220,17 @@ export class UserService {
         if (user) {
           // Caso o usuário exista, chamamos a função para deletar o usuário fisicamente novamente
           await this.deleteUser(userId);
-          console.log(`Usuário ${userId} foi sanitizado (removido novamente do sistema).`);
+          Logger.log('blacklist', `Usuário ${userId} foi sanitizado (removido novamente do sistema).`);
           sanitizationCount++;
         } else {
-          console.log(`Usuário ${userId} já não existe no sistema. Nenhuma ação necessária.`);
+          Logger.log('blacklist', `Usuário ${userId} já não existe no sistema. Nenhuma ação necessária.`);
         }
       }
 
       if (sanitizationCount > 0) {
-        console.log(`Sanitização concluída com sucesso. ${sanitizationCount} usuário(s) removido(s) do sistema.`);
+        Logger.log('blacklist', `Sanitização concluída com sucesso. ${sanitizationCount} usuário(s) removido(s) do sistema.`);
       } else {
-        console.log('Nenhum usuário foi sanitizado, pois todos já estavam removidos.');
+        Logger.log('blacklist', 'Nenhum usuário foi sanitizado, pois todos já estavam removidos.');
       }
 
     } catch (error) {
@@ -241,32 +243,30 @@ export class UserService {
     const { email, password } = loginUserDto;
 
     // Ivan Germano: Aqui verifica se o email digitado existe no banco de dados.
-    console.log('Procurando usuário com email:', email); // Verificar busca de usuário
+    Logger.log('login',`Procurando usuário com email:', ${email}`); // Verificar busca de usuário
     const user = await this.userRepository.findOne({ where: { email } });
 
     if (!user) {
-      console.log('Email INCORRETO ou não existe!');
+      console.log('login',`Email INCORRETO ou não existe!`);
       throw new HttpException('Email INCORRETO ou não existe!', 401);
     }
 
     // Ivan Germano: Aqui verifica se a senha corresponde a criptografia.
-    const isPasswordValid = await this.encryptionService.comparePasswords(
-      password,
-      user.password,
-    );
-    console.log('Senha válida?', isPasswordValid); // Verificar validação de senha
+
+    const isPasswordValid = await this.encryptionService.comparePasswords(password, user.password);
+    Logger.log('login', `Senha válida?, ${isPasswordValid}`); // Verificar validação de senha
     if (!isPasswordValid) {
       console.log('Senha INCORRETA!');
       throw new HttpException('Senha INCORRETA!', 401);
     }
     // Ivan Germano: Retorna o usuário em caso de sucesso
-    console.log('Login bem-sucedido para usuário:', user.email);
+    Logger.log('login',`Login bem-sucedido para usuário:', ${user.email}`);
 
      // Ivan Germano: Após o login bem sucedido criar uma sessão e retornar o token
     const sessionToken = await this.sessionService.createSession(user.id);
-    console.log('Sessão criada com token:', sessionToken);
+    Logger.log('session', `Sessão criada com token: , ${sessionToken}`);
 
-    // console.log(user)
+    Logger.log('login',`${user}`)
     return {user, sessionToken}; 
   }
 
