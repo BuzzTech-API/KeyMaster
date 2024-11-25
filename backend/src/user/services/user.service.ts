@@ -12,6 +12,8 @@ import { SessionService } from '../../session/services/session.service'; // Ivan
 import * as crypto from 'crypto';
 import { PasswordEncryptionService } from 'src/password/services/passwordEncryption.service';
 import { BlacklistService } from '../../blacklist/services/blacklist.service';  // Ivan Germano: Importando o serviço responsável pela BlackList
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class UserService {
@@ -102,20 +104,60 @@ export class UserService {
         throw new HttpException('User not found', 404);
       }
 
+      // Ivan Germano: Registro no log de exclusão local
+      await this.registerDeletionLog(user);
+
       // Ivan Germano: Remover o usuário do banco de dados
       await this.userRepository.remove(user);
-
+      
       // Ivan Germano: Registrar o usuário excluído na blacklist (MongoDB)
       await this.blacklistService.addUserToBlacklist(String(userId));
-      
-      console.log(`Usuário ${userId}, ${user.name} removido com sucesso`);
+ 
+      console.log(`Usuário ${userId}, removido com sucesso`);
     } catch (error) {
       console.error('Erro ao excluir o usuário:', error.message);
       throw new HttpException('Erro ao excluir o usuário', 500);
     }
   }
 
-  // Ivan Germano: Função de login para verificar as credenciais do usuário e criar uma sessão
+// Ivan Germano: Função para salvar o log de exclusão em um arquivo JSON.
+private async registerDeletionLog(user: User): Promise<void> {
+  // Ivan Germano: Aqui estamos ajustando o caminho para garantir que ele aponte para a raiz do backend de forma arbitrária.
+  const logFilePath = path.resolve(process.cwd(), 'logs', 'deletion_log.json');
+  // Ivan Germano: Log de debug para verificar o caminho que está sendo gerado.
+  console.log('Caminho absoluto para o arquivo de log:', logFilePath);
+
+  const logEntry = {
+    userId: user.id,
+    deletedAt: new Date().toISOString(),
+  };
+
+  try {
+    // Criar a pasta logs se não existir.
+    const logDir = path.dirname(logFilePath);
+    if (!fs.existsSync(logDir)) {
+      console.log(`Pasta ${logDir} não encontrada. Criando a pasta.`);
+      fs.mkdirSync(logDir, { recursive: true });
+  }
+
+    // Ivan Germano: Se o arquivo já existe, lemos e atualizamos o conteúdo.
+    if (fs.existsSync(logFilePath)) {
+      const existingData = fs.readFileSync(logFilePath, 'utf8');
+      const logs = existingData ? JSON.parse(existingData) : [];
+      logs.push(logEntry);
+      fs.writeFileSync(logFilePath, JSON.stringify(logs, null, 2));
+    } else {
+      // Ivan Germano: Senão criamos um novo arquivo de deleção de usuários.
+      fs.mkdirSync(path.dirname(logFilePath), { recursive: true });
+      fs.writeFileSync(logFilePath, JSON.stringify([logEntry], null, 2));
+    }
+    console.log(`Log de exclusão do usuário ${user.id} salvo com sucesso.`);
+  } catch (error) {
+    console.error('Erro ao salvar o log de exclusão:', error.message);
+  }
+}
+
+  // Ivan Germano: Função de login para verificar as credenciais do usuário e criar uma sessão.
   async login(loginUserDto: LoginUserDto): Promise<{ user: User; sessionToken: string }> {
     const { email, password } = loginUserDto;
 
