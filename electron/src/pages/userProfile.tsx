@@ -20,6 +20,7 @@ const UserProfile: React.FC<{setActiveScreen: (screen: string) => void}> = ({ se
 
   const { user, setUser } = useUser()
 
+
   // Pega os consentimento do usuario e os Termos Atuais
   const { termOfConditions, userHasConsent } = useTerms()
 
@@ -90,8 +91,6 @@ const UserProfile: React.FC<{setActiveScreen: (screen: string) => void}> = ({ se
     setIsEditing(false);
   };
   
-
-
 
   const handleDeleteAccount = async () => {
     if (window.confirm("Tem certeza que deseja deletar sua conta? Essa ação não pode ser desfeita!")) {

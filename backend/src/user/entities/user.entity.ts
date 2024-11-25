@@ -35,5 +35,4 @@ export class User {
     @OneToMany(() => Session, session => session.user, { cascade: true }) // Relacionamento com Session
     sessions: Session[];
 
-
 }
