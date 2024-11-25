@@ -23,10 +23,6 @@ const SavedPasswords: React.FC = () => {
   }, []);
 
 
-
-
-
-
   const handleDeletePassword = async (id: number) => {
     const success = await deleteUserPassword(id);
 
