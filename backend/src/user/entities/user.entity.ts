@@ -25,9 +25,7 @@ export class User {
     @Column()
     userKey: string
 
-    @OneToMany(() => Password, (password) => password.user)
+    @OneToMany(() => Password, (password) => password.user, { onDelete: 'CASCADE'})
     passwords: Password[];
-
-
 
 }
