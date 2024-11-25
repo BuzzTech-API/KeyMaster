@@ -12,10 +12,12 @@ import { updateUserHasConsent } from "../api/user_has_consent";
 import { deleteUser } from "../api/deleteUser";
 import { logout } from "../api/logout";
 
+interface UserProfileProps {
+  setActiveScreen: (screen: string) => void;
+}
 
-const UserProfile: React.FC<{setActiveScreen: (screen: string) => void}> = ({ setActiveScreen }) => {
-
-  const { user, setUser } = useUser()
+const UserProfile: React.FC<UserProfileProps> = ({ setActiveScreen }) => {
+  const { user, setUser } = useUser();
 
   // Pega os consentimento do usuario e os Termos Atuais
   const { termOfConditions, userHasConsent } = useTerms()
@@ -87,18 +89,18 @@ const UserProfile: React.FC<{setActiveScreen: (screen: string) => void}> = ({ se
     setIsEditing(false);
   };
   
-  
-
-
-
   const handleDeleteAccount = async () => {
     if (window.confirm("Tem certeza que deseja deletar sua conta? Essa ação não pode ser desfeita!")) {
+      const result = await deleteUser(user.id);
 
-      setActiveScreen('login');
-      const result = await deleteUser(user.id)
-      await logout();
-      console.log(result)
-      
+      if (result) {
+        alert("Conta excluída com sucesso. Você será desconectado.");
+        // Limpar o contexto do usuário e redirecioná-lo para a página de login
+        setUser(null);
+        setActiveScreen('login'); // Definir a tela ativa como login para redirecionar o usuário
+      } else {
+        alert("Erro ao excluir a conta. Por favor, tente novamente.");
+      }
     }
   };
 

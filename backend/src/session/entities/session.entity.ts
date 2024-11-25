@@ -12,7 +12,7 @@ export class Session {
   @Column()
   userId: number;
 
-  @ManyToOne(() => User,  { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, user => user.sessions, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
   user: User;
   
@@ -26,3 +26,4 @@ export class Session {
   @Column({ default: true })
   isActive: boolean;
 }
+

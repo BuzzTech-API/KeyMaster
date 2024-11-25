@@ -32,7 +32,7 @@ export class User {
     @OneToMany(() => UserHasConsent, (uhc) => uhc.user)
     consent: UserHasConsent[];
 
-    @OneToMany(() => Session, (session) => session.user, { cascade: ['remove'] })
+    @OneToMany(() => Session, session => session.user, { cascade: true }) // Relacionamento com Session
     sessions: Session[];
 
 }
