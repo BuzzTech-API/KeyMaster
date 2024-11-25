@@ -17,6 +17,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { userInfo } from 'os';
 
+
 @Injectable()
 export class UserService {
   constructor(
@@ -116,6 +117,7 @@ export class UserService {
       await this.blacklistService.addUserToBlacklist(userId);
  
       // console.log(`Usuário ${userId}, removido com sucesso`);
+
 
     } catch (error) {
       console.error('Erro ao excluir o usuário:', error.message);
@@ -239,6 +241,7 @@ export class UserService {
       console.error('Erro ao realizar sanitização:', error.message);
     }
   }
+
 
   // Ivan Germano: Função de login para verificar as credenciais do usuário e criar uma sessão.
   async login(loginUserDto: LoginUserDto): Promise<{ user: User; sessionToken: string }> {
