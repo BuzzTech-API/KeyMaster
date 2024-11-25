@@ -95,7 +95,7 @@ export class UserService {
       await this.userRepository.remove(user);
       
       // Ivan Germano: Registrar o usuário excluído na blacklist (MongoDB)
-      await this.blacklistService.addUserToBlacklist(String(userId));
+      await this.blacklistService.addUserToBlacklist(userId);
  
       console.log(`Usuário ${userId}, removido com sucesso`);
     } catch (error) {
@@ -104,42 +104,121 @@ export class UserService {
     }
   }
 
-// Ivan Germano: Função para salvar o log de exclusão em um arquivo JSON.
-private async registerDeletionLog(user: User): Promise<void> {
-  // Ivan Germano: Aqui estamos ajustando o caminho para garantir que ele aponte para a raiz do backend de forma arbitrária.
-  const logFilePath = path.resolve(process.cwd(), 'logs', 'deletion_log.json');
-  // Ivan Germano: Log de debug para verificar o caminho que está sendo gerado.
-  console.log('Caminho absoluto para o arquivo de log:', logFilePath);
+  // Ivan Germano: Função para salvar o log de exclusão em um arquivo JSON.
+  private async registerDeletionLog(user: User): Promise<void> {
+    // Ivan Germano: Aqui estamos ajustando o caminho para garantir que ele aponte para a raiz do backend de forma arbitrária.
+    const logFilePath = path.resolve(process.cwd(), 'logs', 'deletion_log.json');
+    // Ivan Germano: Log de debug para verificar o caminho que está sendo gerado.
+    console.log('Caminho absoluto para o arquivo de log:', logFilePath);
 
-  const logEntry = {
-    userId: user.id,
-    deletedAt: new Date().toISOString(),
-  };
+    const logEntry = {
+      userId: user.id,
+      deletedAt: new Date().toISOString(),
+    };
 
-  try {
-    // Criar a pasta logs se não existir.
-    const logDir = path.dirname(logFilePath);
-    if (!fs.existsSync(logDir)) {
-      console.log(`Pasta ${logDir} não encontrada. Criando a pasta.`);
-      fs.mkdirSync(logDir, { recursive: true });
-  }
-
-    // Ivan Germano: Se o arquivo já existe, lemos e atualizamos o conteúdo.
-    if (fs.existsSync(logFilePath)) {
-      const existingData = fs.readFileSync(logFilePath, 'utf8');
-      const logs = existingData ? JSON.parse(existingData) : [];
-      logs.push(logEntry);
-      fs.writeFileSync(logFilePath, JSON.stringify(logs, null, 2));
-    } else {
-      // Ivan Germano: Senão criamos um novo arquivo de deleção de usuários.
-      fs.mkdirSync(path.dirname(logFilePath), { recursive: true });
-      fs.writeFileSync(logFilePath, JSON.stringify([logEntry], null, 2));
+    try {
+      // Criar a pasta logs se não existir.
+      const logDir = path.dirname(logFilePath);
+      if (!fs.existsSync(logDir)) {
+        console.log(`Pasta ${logDir} não encontrada. Criando a pasta.`);
+        fs.mkdirSync(logDir, { recursive: true });
     }
-    console.log(`Log de exclusão do usuário ${user.id} salvo com sucesso.`);
-  } catch (error) {
-    console.error('Erro ao salvar o log de exclusão:', error.message);
+
+      // Ivan Germano: Se o arquivo já existe, lemos e atualizamos o conteúdo.
+      if (fs.existsSync(logFilePath)) {
+        const existingData = fs.readFileSync(logFilePath, 'utf8');
+        const logs = existingData ? JSON.parse(existingData) : [];
+        logs.push(logEntry);
+        fs.writeFileSync(logFilePath, JSON.stringify(logs, null, 2));
+      } else {
+        // Ivan Germano: Senão criamos um novo arquivo de deleção de usuários.
+        fs.mkdirSync(path.dirname(logFilePath), { recursive: true });
+        fs.writeFileSync(logFilePath, JSON.stringify([logEntry], null, 2));
+      }
+      console.log(`Log de exclusão do usuário ${user.id} salvo com sucesso.`);
+    } catch (error) {
+      console.error('Erro ao salvar o log de exclusão:', error.message);
+    }
   }
-}
+
+  // Ivan Germano: Função de "Fallback" resposável por ler o "deletion_log.json" e extrair os UserIds da BlackList!
+  private async getDeletedUsersFromLog(): Promise<string[]> {
+    const logFilePath = path.resolve(process.cwd(), 'logs', 'deletion_log.json');
+
+    if (!fs.existsSync(logFilePath)) {
+      console.log('Arquivo de log de deleção não encontrado.');
+      return [];
+    }
+
+    try {
+      const logData = fs.readFileSync(logFilePath, 'utf8');
+      const logs = JSON.parse(logData);
+      return logs.map((log) => log.userId);
+    } catch (error) {
+      console.error('Erro ao ler o arquivo de log de deleção:', error.message);
+      return [];
+    }
+  }
+
+  // Ivan Germano: Função de sanitização, responsável por conferir no mongoDB se os usuários da "blacklist" ainda estão presentes no BD
+  // caso verdadeiro chama a função de deleteUser para excluílo novamente do sistema.
+  async sanitizeRestoredData(): Promise<void> {
+    try {
+      let blacklistedUsersFromDB = [];
+      let blacklistedUsersFromLog = [];
+
+      // Ivan Germano: Aqui a função tenta obter todos os usuários na blacklist do MongoDB
+      try {
+        blacklistedUsersFromDB = await this.blacklistService.getAllBlacklistedUsers();
+        console.log('Usuários obtidos do MongoDB.');
+      } catch (error) {
+        console.error('Erro ao obter usuários da blacklist do MongoDB:', error.message);
+      }
+
+      // Ivan Germano: Aqui a função tentar obter usuários do arquivo de log de deleção - Redundancia atuando como função de FallBack
+      try {
+        blacklistedUsersFromLog = await this.getDeletedUsersFromLog();
+        console.log('Usuários obtidos do arquivo de log de deleção.');
+      } catch (error) {
+        console.error('Erro ao ler o arquivo de log de deleção:', error.message);
+      }
+
+      // Ivan Germano: Unificando as duas listas, removendo duplicatas
+      const allBlacklistedUserIds = new Set([
+        ...blacklistedUsersFromDB.map((user) => user.userId),
+        ...blacklistedUsersFromLog,
+      ]);
+
+      if (allBlacklistedUserIds.size === 0) {
+        console.log('Nenhum usuário na blacklist. Não há necessidade de sanitização.');
+        return;
+      }
+
+      let sanitizationCount = 0; // Contador para usuários sanitizados
+
+      for (const userId of allBlacklistedUserIds) {
+        // Verificar se o usuário ainda existe no banco de dados principal
+        const user = await this.userRepository.findOne({ where: { id: userId } });
+        if (user) {
+          // Caso o usuário exista, chamamos a função para deletar o usuário fisicamente novamente
+          await this.deleteUser(userId);
+          console.log(`Usuário ${userId} foi sanitizado (removido novamente do sistema).`);
+          sanitizationCount++;
+        } else {
+          console.log(`Usuário ${userId} já não existe no sistema. Nenhuma ação necessária.`);
+        }
+      }
+
+      if (sanitizationCount > 0) {
+        console.log(`Sanitização concluída com sucesso. ${sanitizationCount} usuário(s) removido(s) do sistema.`);
+      } else {
+        console.log('Nenhum usuário foi sanitizado, pois todos já estavam removidos.');
+      }
+
+    } catch (error) {
+      console.error('Erro ao realizar sanitização:', error.message);
+    }
+  }
 
   // Ivan Germano: Função de login para verificar as credenciais do usuário e criar uma sessão.
   async login(loginUserDto: LoginUserDto): Promise<{ user: User; sessionToken: string }> {

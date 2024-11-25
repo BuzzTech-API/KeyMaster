@@ -7,19 +7,19 @@ import { Blacklist } from '../interfaces/blacklist.interface';
 export class BlacklistService {
   constructor(@InjectModel('Blacklist') private readonly blacklistModel: Model<Blacklist>) {}
 
-  async addUserToBlacklist(userId: string): Promise<Blacklist> {
+  async addUserToBlacklist(userId: number): Promise<Blacklist> {
     const deletedAt = new Date();
     const blacklistEntry = new this.blacklistModel({ userId, deletedAt });
     console.log(`Usuário ${userId}, adicionado a blacklist`);
     return await blacklistEntry.save();
   }
 
-  async isUserBlacklisted(userId: string): Promise<boolean> {
+  async isUserBlacklisted(userId: number): Promise<boolean> {
     const result = await this.blacklistModel.findOne({ userId });
     return !!result;
   }
 
-  async getBlacklistedUsers(): Promise<Blacklist[]> {
+  async getAllBlacklistedUsers(): Promise<Blacklist[]> {
     return await this.blacklistModel.find().exec();
   }
 }
