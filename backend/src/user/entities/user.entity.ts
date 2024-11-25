@@ -1,5 +1,6 @@
 import { Session } from '../../session/entities/session.entity';
 import { Password } from "src/password/entities/password.entity";
+import { Session } from '../../session/entities/session.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 
@@ -29,7 +30,7 @@ export class User {
     @OneToMany(() => Password, (password) => password.user,{ cascade: ['remove'] })
     passwords: Password[];
 
-    @OneToMany(() => Session, (session) => session.user, { cascade: ['remove'] })
+    @OneToMany(() => Session, session => session.user, { cascade: true }) // Relacionamento com Session
     sessions: Session[];
 
 }
