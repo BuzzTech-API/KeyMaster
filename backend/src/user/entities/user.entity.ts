@@ -1,6 +1,8 @@
 import { Password } from 'src/password/entities/password.entity';
 import { UserHasConsent } from 'src/user_has_consent/entities/user_has_consent.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Session } from '../../session/entities/session.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+
 
 @Entity()
 export class User {
@@ -29,4 +31,8 @@ export class User {
 
     @OneToMany(() => UserHasConsent, (uhc) => uhc.user)
     consent: UserHasConsent[];
+
+    @OneToMany(() => Session, (session) => session.user, { cascade: ['remove'] })
+    sessions: Session[];
+
 }
