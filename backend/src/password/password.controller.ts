@@ -1,15 +1,19 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { PasswordService } from './password.service';
+import { PasswordService } from './services/password.service';
 import { CreatePasswordDto } from './dto/create-password.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
+import { Password } from './entities/password.entity';
 
 @Controller('password')
 export class PasswordController {
   constructor(private readonly passwordService: PasswordService) {}
 
-  @Post()
-  create(@Body() createPasswordDto: CreatePasswordDto) {
-    return this.passwordService.create(createPasswordDto);
+  @Post('user/:userId')
+  create(
+    @Param('userId') userId: number,
+    @Body() passwordData: Partial<Password>
+  ): Promise<Password> {
+    return this.passwordService.create(passwordData, userId);
   }
 
   @Get()
@@ -20,6 +24,11 @@ export class PasswordController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.passwordService.findOne(+id);
+  }
+
+  @Get('user/:userId')
+  async getPasswordsByUserId(@Param('userId') userId: number): Promise<Password[]> {
+    return this.passwordService.getPasswordsByUserId(userId);
   }
 
   @Patch(':id')

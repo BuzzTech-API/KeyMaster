@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { login } from '../api/auth';
+import { useUser } from '../context/UserContext';
+import { getCurrentUser } from '../api/getCurrentUser';
 
 interface LoginProps {
   setActiveScreen: React.Dispatch<React.SetStateAction<string>>; // Callback prop
@@ -10,6 +12,7 @@ const Login: React.FC<LoginProps> = ({ setActiveScreen }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const { setUser } = useUser();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,6 +23,13 @@ const Login: React.FC<LoginProps> = ({ setActiveScreen }) => {
     console.log('Resultado do login:', result);
 
     if (result.success) {
+      //atualiza o context com o usuário atual da sessão
+      const currentUser = await getCurrentUser()
+      if (currentUser.success && currentUser.user) {
+
+        setUser(currentUser.user);
+
+      }
       setActiveScreen('home')
     } else {
       setErrorMessage(result.message || 'Login falhou!');

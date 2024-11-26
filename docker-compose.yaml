@@ -26,7 +26,7 @@ services:
   adminer:
     image: adminer
     restart: always
-    container_name: adminer
+    container_name: adminer-keymaster
     ports:
       - 8080:8080
     networks:

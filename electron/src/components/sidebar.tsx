@@ -1,9 +1,32 @@
+import React, { useEffect, useState } from 'react';
+import { logout } from '../api/logout'; // Ivan Germano: Importa Rota de Logout.
+import { useUser } from '../context/UserContext';
+
 const Sidebar: React.FC<{ setActiveScreen: (screen: string) => void }> = ({
   setActiveScreen,
 }) => {
-  const isSuperUser = localStorage.getItem("isSuperUser");
+
+  //chamando o User >:)
+  const {user} = useUser()
+
+  const handleLogout = async () => {
+    // Ivan Germano: Aqui chamamos a função de logout da API
+    await logout();
+
+    // Ivan Germano: Aqui vamos redirecionar para a tela de login
+    setActiveScreen('login');
+  };
+
+
   return (
-    <div className="z-10 fixed w-56 bg-gray-800 text-white h-screen flex flex-col">
+    <div className="z-10 fixed w-56 bg-gray-800 text-white h-screen flex flex-col items">
+      {/*Ivan Germano: Componente para mostrar qual usuário está logado */}
+      {user && (
+        <div className="p-4 bg-gray-300 text-black font-bold text-center">
+          <p>Usuário: {user.name}</p>
+          <p>Id: {user.id}</p>
+        </div>
+      )}
       <button
         className="p-4 hover:bg-gray-700"
         onClick={() => setActiveScreen("home")}
@@ -16,7 +39,7 @@ const Sidebar: React.FC<{ setActiveScreen: (screen: string) => void }> = ({
       >
         Saved Passwords
       </button>
-      {isSuperUser !== undefined && isSuperUser === "true" && (
+      {user !== undefined && user.isSuperUser && (
         <button
           className="p-4 hover:bg-gray-700"
           onClick={() => setActiveScreen("signupSu")}
@@ -24,7 +47,7 @@ const Sidebar: React.FC<{ setActiveScreen: (screen: string) => void }> = ({
           Criar Usuário
         </button>
       )}
-      {
+      { user && user.isSuperUser &&
         <button
           className="p-4 hover:bg-gray-700"
           onClick={() => setActiveScreen("cadastrarTermo")}
@@ -33,18 +56,18 @@ const Sidebar: React.FC<{ setActiveScreen: (screen: string) => void }> = ({
         </button>
       }
       <div className="mt-auto">
+        <button className="border-2 p-4 hover:bg-gray-700 w-full" onClick={() => setActiveScreen('userProfile')}>
+          User Profile
+        </button>
         <button
-          className="p-4 hover:bg-gray-700 w-full"
-          onClick={() => {
-            // Handle logout logic here
-            console.log("Logging out...");
-            // For example, you can reset the active screen to 'login':
-            setActiveScreen("login");
-          }}
+          className="p-4 bg-red-700 hover:bg-red-500 w-full"
+          onClick={handleLogout}
         >
           Logout
         </button>
       </div>
+
+
     </div>
   );
 };
