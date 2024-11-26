@@ -30,7 +30,7 @@ export class User {
     @OneToMany(() => Password, (password) => password.user,{ cascade: ['remove'] })
     passwords: Password[];
 
-    @OneToMany(() => Session, session => session.user, { cascade: true }) // Relacionamento com Session
+    @OneToMany(() => Session, (session) => session.user, { cascade: ['remove'] })
     sessions: Session[];
 
 }
