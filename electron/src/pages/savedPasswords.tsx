@@ -23,18 +23,6 @@ const SavedPasswords: React.FC = () => {
   }, []);
 
 
-  const handleDeletePassword = async (id: number) => {
-    const success = await deleteUserPassword(id);
-
-    if (success) {
-      setPasswords((prevPasswords) => prevPasswords.filter((password) => password.id !== id));
-    } else {
-      console.log("Failed to delete password");
-    }
-    handleClosePanel()
-  };
-
-
 
 
   const handleDeletePassword = async (id: number) => {
