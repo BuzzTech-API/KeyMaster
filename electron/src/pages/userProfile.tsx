@@ -16,8 +16,9 @@ interface UserProfileProps {
   setActiveScreen: (screen: string) => void;
 }
 
-const UserProfile: React.FC<UserProfileProps> = ({ setActiveScreen }) => {
-  const { user, setUser } = useUser();
+const UserProfile: React.FC<{setActiveScreen: (screen: string) => void}> = ({ setActiveScreen }) => {
+
+  const { user, setUser } = useUser()
 
   // Pega os consentimento do usuario e os Termos Atuais
   const { termOfConditions, userHasConsent } = useTerms()
@@ -89,6 +90,9 @@ const UserProfile: React.FC<UserProfileProps> = ({ setActiveScreen }) => {
     setIsEditing(false);
   };
   
+
+
+
   const handleDeleteAccount = async () => {
     if (window.confirm("Tem certeza que deseja deletar sua conta? Essa ação não pode ser desfeita!")) {
       const result = await deleteUser(user.id);
