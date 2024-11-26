@@ -1,3 +1,4 @@
+import { Session } from '../../session/entities/session.entity';
 import { Password } from "src/password/entities/password.entity";
 import { Session } from '../../session/entities/session.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";

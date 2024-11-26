@@ -3,8 +3,8 @@ import { IoEyeOutline, IoEyeSharp } from "react-icons/io5";
 import React, { useEffect, useState } from "react"
 import { FaRegEdit } from "react-icons/fa";
 import { updateUser } from "../api/updateUser";
-import { useUser } from "../context/UserContext";
 import { deleteUser } from "../api/deleteUser";
+import { useUser } from "../context/UserContext";
 
 interface UserProfileProps {
   setActiveScreen: (screen: string) => void;
@@ -25,6 +25,15 @@ const UserProfile: React.FC<UserProfileProps> = ({ setActiveScreen }) => {
   const handleEditUser = () => {
     setIsEditing(true);
   };
+  
+  const handleSaveChanges = async () => {
+  
+  //Edição de Usuário
+  const [isEditing, setIsEditing] = useState(false);
+  const handleEditUser = () => {
+    setIsEditing(true);
+  };
+
   
   const handleSaveChanges = async () => {
 
@@ -53,7 +62,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ setActiveScreen }) => {
     // Save changes to the server or update state as needed
     setIsEditing(false);
   };
-  
+    
   const handleDeleteAccount = async () => {
     if (window.confirm("Tem certeza que deseja deletar sua conta? Essa ação não pode ser desfeita!")) {
       const result = await deleteUser(user.id);

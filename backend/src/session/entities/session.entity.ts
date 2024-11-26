@@ -15,6 +15,7 @@ export class Session {
   @ManyToOne(() => User, user => user.sessions, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
   user: User;
+  
 
   @Column()
   createdAt: Date;
