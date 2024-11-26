@@ -4,11 +4,34 @@ import React, { useEffect, useState } from "react"
 import { FaRegEdit } from "react-icons/fa";
 import { updateUser } from "../api/updateUser";
 import { useUser } from "../context/UserContext";
+import { useTerms } from "../context/TermsContext";
+import Condition from "../types/condition";
+import Checkbox from "../components/checkbox";
+import TermsAndCondition from "../components/termsAndCondition";
+import { updateUserHasConsent } from "../api/user_has_consent";
 
 
 const UserProfile: React.FC = () => {
 
   const { user, setUser } = useUser()
+
+  // Pega os consentimento do usuario e os Termos Atuais
+  const { termOfConditions, userHasConsent } = useTerms()
+
+  // State do modal do PDF do Termo
+  const [isOpen, setIsOpen] = useState(false);
+
+  // Pega as condições do termo ativo para exibir
+  const [conditions, setConditions] = useState<Condition[]>(userHasConsent.filter((userConsent) =>
+    termOfConditions.consents.some(
+      (termConsent) => termConsent.id === userConsent.consent_id
+    )
+  )
+    .map((userConsent) => {
+      const newCondition = new Condition(userConsent.consent);
+      newCondition.checked = userConsent.isAccept;
+      return newCondition;
+    }))
 
   const [userDetails, setUserDetails] = useState({
     id: user.id,
@@ -16,21 +39,29 @@ const UserProfile: React.FC = () => {
     email: user.email,
     password: ''
   });
-  
+
   //Edição de Usuário
   const [isEditing, setIsEditing] = useState(false);
   const handleEditUser = () => {
     setIsEditing(true);
   };
-  
-  const handleSaveChanges = async () => {
 
+  const handleSaveChanges = async (e: React.FormEvent) => {
+
+    e.preventDefault()
     const updatedUserDetails = { ...userDetails };
 
     //Se o usuário não colocar senha ela não sera alterada
     if (updatedUserDetails.password === "") {
       delete updatedUserDetails.password;
     }
+
+    const requestUpdate = conditions.map((condition)=>{
+      if(condition.consentimento.isOptional){
+        return updateUserHasConsent(user.id, condition.consentimento.id, condition.checked) 
+      }
+    })
+    const resultUpdates = await Promise.all(requestUpdate)
 
     //salvar os userDetails
     console.log("Atualizando usuário: ", { userDetails })
@@ -50,8 +81,8 @@ const UserProfile: React.FC = () => {
     // Save changes to the server or update state as needed
     setIsEditing(false);
   };
-  
-  
+
+
 
   const handleDeleteAccount = () => {
     if (window.confirm("Tem certeza que deseja deletar sua conta? Essa ação não pode ser desfeita!")) {
@@ -83,6 +114,9 @@ const UserProfile: React.FC = () => {
         </div>
 
       </div>
+      <form
+        onSubmit={handleSaveChanges}
+      >
       <div className="mb-4">
         <label className="block font-semibold mb-2">Name</label>
         {isEditing ? (
@@ -94,8 +128,8 @@ const UserProfile: React.FC = () => {
             className="w-full p-2 bg-gray-700 rounded text-gray-200 focus:outline-none"
           />
         ) : (
-          <p className="p-2 bg-gray-700 rounded">{userDetails.name} </p>
-        )}
+            <p className="p-2 bg-gray-700 rounded">{userDetails.name} </p>
+          )}
       </div>
 
       <div className="mb-4">
@@ -109,8 +143,8 @@ const UserProfile: React.FC = () => {
             className="w-full p-2 bg-gray-700 rounded text-gray-200 focus:outline-none"
           />
         ) : (
-          <p className="p-2 bg-gray-700 rounded">{userDetails.email}</p>
-        )}
+            <p className="p-2 bg-gray-700 rounded">{userDetails.email}</p>
+          )}
       </div>
 
       <div className="mb-6">
@@ -132,24 +166,71 @@ const UserProfile: React.FC = () => {
               {showPassword ? (
                 <IoEyeSharp className="w-5 h-5" aria-hidden="true" />
               ) : (
-                <IoEyeOutline className="w-5 h-5" aria-hidden="true" />
-              )}
+                  <IoEyeOutline className="w-5 h-5" aria-hidden="true" />
+                )}
             </button>
           </div>
         ) : (
-          <p className="p-2 bg-gray-700 rounded">{userDetails.password === "" ? "•".repeat(8) : "•".repeat(userDetails.password.length)}</p>
-        )}
+            <p className="p-2 bg-gray-700 rounded">{userDetails.password === "" ? "•".repeat(8) : "•".repeat(userDetails.password.length)}</p>
+          )}
       </div>
+
+
+      <div className="flex w-full items-center justify-center my-4 text-center">
+        <span
+          className="text-white text-xl align-middle self-center justify-center justify-self-center hover:text-gray-500 hover:cursor-pointer"
+          onClick={() => setIsOpen(true)}
+        >
+          Termos e condições aceitos
+        </span>
+      </div>
+
+      <div className="flex flex-col gap-6 mb-4" >
+      {conditions!== undefined && conditions.map((condition, index)=>{
+        if(isEditing){
+          return(
+            <Checkbox
+              key={index}
+              checked={condition.checked}
+              required={condition.consentimento.isOptional ? false : true}
+              onChange={function(check): void {
+                condition.checked = check
+                setConditions(conditions.map(conditions=>conditions))
+              }}
+            >
+              {condition.consentimento.content}
+            </Checkbox>
+          )
+        }else{
+          return(
+            <Checkbox
+              key={index}
+              checked={condition.checked}
+              required={condition.consentimento.isOptional ? false : true}
+              onChange={function(check): void {
+              }}
+            >
+              {condition.consentimento.content}
+            </Checkbox>
+          )
+
+        }
+      }
+      )}
+      </div>
+
+      <TermsAndCondition isOpen={isOpen}  pdfLink={termOfConditions.pdfLink!== undefined? termOfConditions.pdfLink : ''} setIsOpen={setIsOpen} />
 
       {isEditing && (
         <button
-          onClick={handleSaveChanges}
+          type="submit"
           className="w-full bg-blue-600 p-2 rounded font-semibold hover:bg-blue-700 transition-colors mb-4"
         >
           Save Changes
         </button>
       )}
 
+      </form>
       <button
         onClick={handleDeleteAccount}
         className="fixed bottom-4 right-4 text-md text-gray-400 underline mt-4 "

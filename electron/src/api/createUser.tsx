@@ -7,7 +7,7 @@ export default async function CreateUser(body: {
   isSuperUser: boolean;
 }) {
   try {
-    const request = await fetch(BACKEND_URL + "user", {
+    const request = await fetch(BACKEND_URL + "user/create", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

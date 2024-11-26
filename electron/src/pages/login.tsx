@@ -18,9 +18,9 @@ const Login: React.FC<LoginProps> = ({ setActiveScreen }) => {
     e.preventDefault();
     // Ivan Germano: Aqui vamos usar a função Fetch chamada 'login' para enviar o email e senha ao backend, 
     // preferi separar para deixar mais limpo o código.
-    console.log('Enviando dados para login:', { email, password });
+    //console.log('Enviando dados para login:', { email, password });
     const result = await login(email, password); // Usando a função de login da API
-    console.log('Resultado do login:', result);
+    //console.log('Resultado do login:', result);
 
     if (result.success) {
       //atualiza o context com o usuário atual da sessão

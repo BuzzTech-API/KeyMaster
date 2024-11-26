@@ -31,15 +31,18 @@ export class ConsentUpdateService {
   ) {
     const usuarioConsentimento = await this.userHasConsentRepository.findOne({
       where: { user_id: usuarioId, consent_id: consentimentoId },
+      relations: ['consent']
     });
 
     if (usuarioConsentimento && usuarioConsentimento.consent.isOptional) {
+      const alteracao = new ConsentUpdate();
+      alteracao.oldStatus = usuarioConsentimento.isAccept
       usuarioConsentimento.isAccept = isAceito;
       await this.userHasConsentRepository.save(usuarioConsentimento);
 
-      const alteracao = new ConsentUpdate();
       alteracao.user_id = usuarioId;
       alteracao.consent_id = consentimentoId;
+      alteracao.dataUpdate = new Date()
       await this.consentUpdateRepository.save(alteracao);
     }
   }

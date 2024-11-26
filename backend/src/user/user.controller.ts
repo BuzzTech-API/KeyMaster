@@ -56,6 +56,11 @@ export class UserController {
     return this.userService.findAll();
   }
 
+@Get('user-has-consent/:id')
+  getUserHasConsents(@Param('id') id: string) {
+    return this.userService.getConsentimentosPorUsuario(+id);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.userService.findOne(+id);

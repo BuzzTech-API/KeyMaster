@@ -12,7 +12,7 @@ export class TermOfCondition {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({nullable: true})
   pdfLink: string;
 
   @Column()

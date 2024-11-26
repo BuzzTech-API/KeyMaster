@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ModalCreateConsent } from "../components/ModalCreateConsent";
 import CreateTermOfConditions from "../api/term-of-conditions";
 import CreateConsent from "../api/consent";
+import { useTerms } from "../context/TermsContext";
 
 type props = {};
 export default function CadastroTermo({ }: props) {
@@ -12,6 +13,7 @@ export default function CadastroTermo({ }: props) {
   const [consentimentos, setConsentimentos] = useState<Array<Consentimento>>(
     [],
   );
+  const { revalidateTerms } = useTerms()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,6 +30,7 @@ export default function CadastroTermo({ }: props) {
           });
         }),
       );
+      await revalidateTerms()
     }
 
     // NOTE: Configurar a criação dos checkbox para o usuário

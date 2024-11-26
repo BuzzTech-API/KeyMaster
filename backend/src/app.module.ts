@@ -56,7 +56,9 @@ export class AppModule {
       .apply(SessionMiddleware) //Ivan Germano: Aplicando o middleware
       .exclude(
         { path: 'user/login', method: RequestMethod.POST }, //Ivan Germano: Exclui a rota de login do middleware de sessão
-        { path: 'user/create', method: RequestMethod.POST } //Ivan Germano: Exclui a rota de create do middleware, útil para testes no postman
+        { path: 'user/create', method: RequestMethod.POST }, //Ivan Germano: Exclui a rota de create do middleware, útil para testes no postman
+        { path: 'term-of-condition', method: RequestMethod.GET }, //Ivan Germano: Exclui a rota de create do middleware, útil para testes no postman
+        { path: 'user-has-consent', method: RequestMethod.POST }, //Ivan Germano: Exclui a rota de create do middleware, útil para testes no postman
       )
       .forRoutes({ path: '*', method: RequestMethod.ALL }); //Ivan Germano: Define as rotas que devem ser protegidas
   }

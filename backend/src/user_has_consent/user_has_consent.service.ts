@@ -1,11 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserHasConsentDto } from './dto/create-user_has_consent.dto';
 import { UpdateUserHasConsentDto } from './dto/update-user_has_consent.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserHasConsent } from './entities/user_has_consent.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UserHasConsentService {
+constructor(
+    @InjectRepository(UserHasConsent)
+    private readonly userHasConsentRepository: Repository<UserHasConsent>,
+  ) {}
   create(createUserHasConsentDto: CreateUserHasConsentDto) {
-    return 'This action adds a new userHasConsent';
+    const newUserHasConsent = new UserHasConsent();
+    newUserHasConsent.isAccept = createUserHasConsentDto.isAccept;
+    newUserHasConsent.consent_id = createUserHasConsentDto.consent_id;
+    newUserHasConsent.user_id = createUserHasConsentDto.user_id;
+    newUserHasConsent.dateAccepted = new Date()
+    return this.userHasConsentRepository.save(newUserHasConsent)
   }
 
   findAll() {

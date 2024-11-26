@@ -6,11 +6,12 @@ export default async function CreateConsent(body: {
   termOfCondition_id: number;
 }) {
   try {
-    const request = await fetch(BACKEND_URL + "term-of-condition", {
+    const request = await fetch(BACKEND_URL + "consent", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: 'include', // Inclui cookies de sessão na requisição
       body: JSON.stringify(body),
     });
 

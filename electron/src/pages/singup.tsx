@@ -5,6 +5,8 @@ import TermsAndCondition from "../components/termsAndCondition";
 import CreateUser from "../api/createUser";
 import { TermOfConditions } from "../types/termOfConditions";
 import { GetTermOfConditions } from "../api/term-of-conditions";
+import Condition from "../types/condition";
+import { createUserHasConsent } from "../api/user_has_consent";
 
 interface Signpprops {
   setActiveScreen: React.Dispatch<React.SetStateAction<string>>; // Callback prop
@@ -24,21 +26,23 @@ const Signup: React.FC<Signpprops> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [checked, setChecked] = useState(false);
   const [termOfConditions, setTermOfConditions] = useState<TermOfConditions>(new TermOfConditions())
+  const [conditions, setConditions] = useState<Condition[]>()
   useEffect(()=>{
     (async () => {
-     const getTerms = await GetTermOfConditions()
-     const newTerm = new TermOfConditions()
-    newTerm.id = getTerms.id
-    newTerm.isValid = getTerms.isValid
-    newTerm.pdfLink = getTerms.pdfLink
-    newTerm.aplicationDate = getTerms.aplicationDate
-    newTerm.consents = getTerms.consent
-    setTermOfConditions(newTerm)
-    console.log(getTerms);
-    console.log(termOfConditions); 
+      const getTerms = await GetTermOfConditions()
+      const newTerm = new TermOfConditions()
+      newTerm.id = getTerms.id
+      newTerm.isValid = getTerms.isValid
+      newTerm.pdfLink = getTerms.pdfLink
+      newTerm.aplicationDate = getTerms.aplicationDate
+      newTerm.consents = getTerms.consent
+      setConditions(newTerm.consents.map((consent)=>{
+        return new Condition(consent)
+      }))
+      setTermOfConditions(newTerm)
     })();
-    
-    
+
+
   },[])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -46,6 +50,15 @@ const Signup: React.FC<Signpprops> = ({
     try {
       // NOTE: Fazer função de fetch para cadastro do usuário
       const createUser = await CreateUser({ isSuperUser, ...signupData });
+      const newUser = await createUser.json()
+      const requestsConsents = conditions.map((condition)=>{
+        return createUserHasConsent({
+          user_id: newUser.id,
+          consent_id: condition.consentimento.id,
+          isAccept: condition.checked
+        })
+      })
+      await Promise.all(requestsConsents)
     } catch (error) {
       console.error(error);
     } finally {
@@ -57,9 +70,20 @@ const Signup: React.FC<Signpprops> = ({
   return (
     <div className="w-screen min-h-screen flex items-center justify-center bg-gray-900">
       <div className="bg-gray-800 p-8 rounded-lg shadow-lg max-w-md w-full">
-        <h2 className="text-3xl font-bold text-white text-center mb-8">
-          KeyMaster
-        </h2>
+        <div className="flex flex-row items-center justify-center gap-6 mb-8">
+          <h2 className="text-3xl font-bold text-white text-center">
+            KeyMaster
+          </h2>
+          <button
+            className="w-20 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition duration-300"
+            onClick={
+              ()=>
+                setActiveScreen("login")
+            }
+          >
+            Voltar
+          </button>
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Name Input */}
@@ -133,19 +157,21 @@ const Signup: React.FC<Signpprops> = ({
             </span>
           </div>
 
-          {termOfConditions.consents!== undefined && termOfConditions.consents.map((consent)=>{
-return(
-          <Checkbox
-            checked={false}
-            required={consent.isOptional ? false : true}
-            onChange={function(check): void {
-              setChecked(check);
-            }}
-          >
-            {consent.content}
-          </Checkbox>
-)
-}
+          {conditions!== undefined && conditions.map((condition, index)=>{
+            return(
+              <Checkbox
+                key={index}
+                checked={condition.checked}
+                required={condition.consentimento.isOptional ? false : true}
+                onChange={function(check): void {
+                  condition.checked = check
+                  setConditions(conditions.map(conditions=>conditions))
+                }}
+              >
+                {condition.consentimento.content}
+              </Checkbox>
+            )
+          }
           )}
 
           <TermsAndCondition isOpen={isOpen}  pdfLink={termOfConditions.pdfLink!== undefined? termOfConditions.pdfLink : ''} setIsOpen={setIsOpen} />

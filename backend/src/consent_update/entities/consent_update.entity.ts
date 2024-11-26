@@ -6,6 +6,7 @@ import {
   Column,
   ManyToOne,
   CreateDateColumn,
+  JoinColumn,
 } from 'typeorm';
 
 @Entity('consent_update')
@@ -19,10 +20,15 @@ export class ConsentUpdate {
   @Column()
   consent_id: number;
 
+  @Column()
+  oldStatus: boolean;
+
   @ManyToOne(() => User)
+  @JoinColumn({ name: 'user_id' })
   user: User;
 
   @ManyToOne(() => Consent)
+  @JoinColumn({ name: 'consent_id' })
   consent: Consent;
 
   @CreateDateColumn()

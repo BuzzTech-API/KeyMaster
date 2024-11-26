@@ -9,6 +9,7 @@ async function CreateTermOfConditions(body: {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: 'include', // Inclui cookies de sessão na requisição
       body: JSON.stringify(body),
     });
 

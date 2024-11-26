@@ -41,6 +41,6 @@ export class TermOfConditions {
         this._consents = value;
     }
     constructor() {
-        
+       this.consents = new Array<Consentimento>() 
     }
 }
