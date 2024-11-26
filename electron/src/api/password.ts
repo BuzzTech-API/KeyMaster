@@ -49,9 +49,10 @@ export async function createPassword(newPassword: Password, userId: number): Pro
     }
 }
 
-export async function deleteUserPassword(userId: number): Promise<boolean> {
+export async function deleteUserPassword(id: number): Promise<boolean> {
     try {
-        const response = await fetch(`http://localhost:8000/password/${userId}`, {
+        const response = await fetch(`http://localhost:8000/password/${id}`, {
+          
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",

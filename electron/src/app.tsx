@@ -24,7 +24,7 @@ const App = () => {
         {activeScreen === 'login' && <Login onLoginSuccess={handleLoginSuccess} />}
         {activeScreen !== 'login' && <Sidebar setActiveScreen={setActiveScreen} />}
         {activeScreen === 'home' && (<Home />)}
-        {activeScreen === 'savedPasswords' && (<SavedPasswords/>)}
+        {activeScreen === 'savedPasswords' && (<SavedPasswords />)}
         {activeScreen === 'userProfile' && (<UserProfile setActiveScreen={setActiveScreen} />)}
       </div>
     </UserProvider>

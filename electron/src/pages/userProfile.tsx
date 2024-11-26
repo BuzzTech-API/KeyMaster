@@ -5,15 +5,13 @@ import { FaRegEdit } from "react-icons/fa";
 import { updateUser } from "../api/updateUser";
 import { deleteUser } from "../api/deleteUser";
 import { useUser } from "../context/UserContext";
-import { logout } from "../api/logout";
 
 interface UserProfileProps {
   setActiveScreen: (screen: string) => void;
 }
 
-const UserProfile: React.FC<{setActiveScreen: (screen: string) => void}> = ({ setActiveScreen }) => {
-
-  const { user, setUser } = useUser()
+const UserProfile: React.FC<UserProfileProps> = ({ setActiveScreen }) => {
+  const { user, setUser } = useUser();
 
   const [userDetails, setUserDetails] = useState({
     id: user.id,
@@ -21,7 +19,14 @@ const UserProfile: React.FC<{setActiveScreen: (screen: string) => void}> = ({ se
     email: user.email,
     password: ''
   });
-
+  
+  //Edição de Usuário
+  const [isEditing, setIsEditing] = useState(false);
+  const handleEditUser = () => {
+    setIsEditing(true);
+  };
+  
+  const handleSaveChanges = async () => {
   
   //Edição de Usuário
   const [isEditing, setIsEditing] = useState(false);
@@ -44,7 +49,7 @@ const UserProfile: React.FC<{setActiveScreen: (screen: string) => void}> = ({ se
     const result = await updateUser(updatedUserDetails, user.id)
     console.log("Resultado da operação: ", result)
 
-    if (result.success) {
+    if(result.success){
 
       //Isso salva o usuário no context, garantindo que só vai salvar as alterações
       setUser((prevUser) => ({
@@ -57,10 +62,7 @@ const UserProfile: React.FC<{setActiveScreen: (screen: string) => void}> = ({ se
     // Save changes to the server or update state as needed
     setIsEditing(false);
   };
-  
-
-
-
+    
   const handleDeleteAccount = async () => {
     if (window.confirm("Tem certeza que deseja deletar sua conta? Essa ação não pode ser desfeita!")) {
       const result = await deleteUser(user.id);
