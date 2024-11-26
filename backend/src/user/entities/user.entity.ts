@@ -1,4 +1,5 @@
 import { Password } from "src/password/entities/password.entity";
+import { Session } from '../../session/entities/session.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 
@@ -25,9 +26,10 @@ export class User {
     @Column()
     userKey: string
 
-    @OneToMany(() => Password, (password) => password.user)
+    @OneToMany(() => Password, (password) => password.user, { onDelete: 'CASCADE'})
     passwords: Password[];
 
-
+    @OneToMany(() => Session, session => session.user, { cascade: true }) // Relacionamento com Session
+    sessions: Session[];
 
 }

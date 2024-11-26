@@ -4,11 +4,14 @@ import React, { useEffect, useState } from "react"
 import { FaRegEdit } from "react-icons/fa";
 import { updateUser } from "../api/updateUser";
 import { useUser } from "../context/UserContext";
+import { deleteUser } from "../api/deleteUser";
 
+interface UserProfileProps {
+  setActiveScreen: (screen: string) => void;
+}
 
-const UserProfile: React.FC = () => {
-
-  const { user, setUser } = useUser()
+const UserProfile: React.FC<UserProfileProps> = ({ setActiveScreen }) => {
+  const { user, setUser } = useUser();
 
   const [userDetails, setUserDetails] = useState({
     id: user.id,
@@ -51,11 +54,18 @@ const UserProfile: React.FC = () => {
     setIsEditing(false);
   };
   
-  
-
-  const handleDeleteAccount = () => {
+  const handleDeleteAccount = async () => {
     if (window.confirm("Tem certeza que deseja deletar sua conta? Essa ação não pode ser desfeita!")) {
-      // Handle account deletion logic
+      const result = await deleteUser(user.id);
+
+      if (result) {
+        alert("Conta excluída com sucesso. Você será desconectado.");
+        // Limpar o contexto do usuário e redirecioná-lo para a página de login
+        setUser(null);
+        setActiveScreen('login'); // Definir a tela ativa como login para redirecionar o usuário
+      } else {
+        alert("Erro ao excluir a conta. Por favor, tente novamente.");
+      }
     }
   };
 
