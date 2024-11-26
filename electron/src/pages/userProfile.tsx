@@ -45,7 +45,7 @@ const UserProfile: React.FC<{setActiveScreen: (screen: string) => void}> = ({ se
     email: user.email,
     password: ''
   });
-  
+
   //Edição de Usuário
   const [isEditing, setIsEditing] = useState(false);
   const handleEditUser = () => {
@@ -55,7 +55,6 @@ const UserProfile: React.FC<{setActiveScreen: (screen: string) => void}> = ({ se
   const handleSaveChanges = async (e: React.FormEvent) => {
 
     e.preventDefault()
-  
     const updatedUserDetails = { ...userDetails };
 
     //Se o usuário não colocar senha ela não sera alterada
@@ -88,8 +87,6 @@ const UserProfile: React.FC<{setActiveScreen: (screen: string) => void}> = ({ se
     // Save changes to the server or update state as needed
     setIsEditing(false);
   };
-  
-
   const handleDeleteAccount = async () => {
     if (window.confirm("Tem certeza que deseja deletar sua conta? Essa ação não pode ser desfeita!")) {
       const result = await deleteUser(user.id);
@@ -253,4 +250,4 @@ const UserProfile: React.FC<{setActiveScreen: (screen: string) => void}> = ({ se
   );
 }
 
-export default UserProfile;
+export default UserProfile

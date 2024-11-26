@@ -68,6 +68,8 @@ export class AppModule {
         { path: 'user/create', method: RequestMethod.POST }, //Ivan Germano: Exclui a rota de CREATE USER do middleware de sessão
         //{ path: 'user/:id', method: RequestMethod.DELETE }, // Ivan Germano: Exclui a rota de DELETE do middleware de sessão - DESCOMENTAR APENAS PARA TESTES
         //{ path: 'user/sanitize', method: RequestMethod.POST } // Ivan Germano: Rota para testes manuais de sanitização dos dados de backup pelo administrador - DESCOMENTAR APENAS PARA TESTES
+        { path: 'term-of-condition', method: RequestMethod.GET }, //Ivan Germano: Exclui a rota de create do middleware, útil para testes no postman
+        { path: 'user-has-consent', method: RequestMethod.POST }, //Ivan Germano: Exclui a rota de create do middleware, útil para testes no postman
       )
       .forRoutes({ path: '*', method: RequestMethod.ALL });
   }
