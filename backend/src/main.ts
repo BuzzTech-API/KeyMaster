@@ -12,7 +12,6 @@ import { Logger } from './utils/Logger';
 Logger.disableCategory('blacklist');
 Logger.disableCategory('session');
 Logger.disableCategory('login');
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

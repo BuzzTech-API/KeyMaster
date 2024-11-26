@@ -3,13 +3,13 @@ import { IoEyeOutline, IoEyeSharp } from "react-icons/io5";
 import React, { useEffect, useState } from "react"
 import { FaRegEdit } from "react-icons/fa";
 import { updateUser } from "../api/updateUser";
+import { deleteUser } from "../api/deleteUser";
 import { useUser } from "../context/UserContext";
 import { useTerms } from "../context/TermsContext";
 import Condition from "../types/condition";
 import Checkbox from "../components/checkbox";
 import TermsAndCondition from "../components/termsAndCondition";
 import { updateUserHasConsent } from "../api/user_has_consent";
-import { deleteUser } from "../api/deleteUser";
 import { logout } from "../api/logout";
 
 interface UserProfileProps {
@@ -46,11 +46,14 @@ const UserProfile: React.FC<{setActiveScreen: (screen: string) => void}> = ({ se
     password: ''
   });
 
+  
   //Edição de Usuário
   const [isEditing, setIsEditing] = useState(false);
   const handleEditUser = () => {
     setIsEditing(true);
   };
+
+  
 
   const handleSaveChanges = async (e: React.FormEvent) => {
 
@@ -87,6 +90,9 @@ const UserProfile: React.FC<{setActiveScreen: (screen: string) => void}> = ({ se
     // Save changes to the server or update state as needed
     setIsEditing(false);
   };
+  
+
+
   const handleDeleteAccount = async () => {
     if (window.confirm("Tem certeza que deseja deletar sua conta? Essa ação não pode ser desfeita!")) {
       const result = await deleteUser(user.id);
