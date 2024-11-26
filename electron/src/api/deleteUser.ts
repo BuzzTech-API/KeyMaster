@@ -4,7 +4,7 @@ export async function deleteUser(userId: number): Promise<{ success: boolean; me
 
     try {
         const response = await fetch(`http://localhost:8000/user/${userId}`, {
-            method: "GET",
+            method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
             },

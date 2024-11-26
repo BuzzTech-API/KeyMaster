@@ -100,7 +100,7 @@ export class UserService {
     const sessionToken = await this.sessionService.createSession(user.id);
     console.log('Sessão criada com token:', sessionToken);
 
-    console.log(user)
+    // console.log(user)
     return {user, sessionToken}; 
   }
 
