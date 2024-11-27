@@ -6,30 +6,40 @@ import Sidebar from './components/sidebar';
 import Login from './pages/login';
 import UserProfile from './pages/userProfile';
 import { UserProvider } from './context/UserContext';
+import Signup from "./pages/singup";
+import CadastroTermo from "./pages/termoCadastro";
+import { TermProvider } from './context/TermsContext';
 
 
 
 const App = () => {
-  //Estado inicial
-  const [activeScreen, setActiveScreen] = useState('login');
+  const [activeScreen, setActiveScreen] = useState("cadastrarTermo");
 
-  const handleLoginSuccess = () => {
-    setActiveScreen('home');
-  };
 
   return (
     <UserProvider>
-      <div className="flex h-screen">
-        {/* refatoração, agora só chama o sidebar se a tela ativa não for Login, bem mais claro. */}
-        {activeScreen === 'login' && <Login onLoginSuccess={handleLoginSuccess} />}
-        {activeScreen !== 'login' && <Sidebar setActiveScreen={setActiveScreen} />}
-        {activeScreen === 'home' && (<Home />)}
-        {activeScreen === 'savedPasswords' && (<SavedPasswords />)}
-        {activeScreen === 'userProfile' && (<UserProfile setActiveScreen={setActiveScreen} />)}
-      </div>
+      <TermProvider>
+        <div className="flex h-screen">
+          {/* refatoração, agora só chama o sidebar se a tela ativa não for Login, bem mais claro. */}
+          {activeScreen === "login" && <Login setActiveScreen={setActiveScreen} />}
+          {activeScreen !== 'login' && activeScreen !== 'singup' && <Sidebar setActiveScreen={setActiveScreen} />}
+          {activeScreen === 'home' && (<Home />)}
+          {activeScreen === 'savedPasswords' && (<SavedPasswords />)}
+          {activeScreen === 'userProfile' && (<UserProfile  setActiveScreen={setActiveScreen}/>)}
+          {activeScreen === "signup" && (
+            <Signup setActiveScreen={setActiveScreen} />
+          )}
+          {activeScreen === "cadastrarTermo" && (
+            <CadastroTermo setActiveScreen={setActiveScreen} />
+          )}
+          {activeScreen === "signupSu" && (
+            <Signup setActiveScreen={setActiveScreen} isSuperUser />
+          )}
+        </div>
+      </TermProvider>
     </UserProvider>
-  );
-}
+  )
+};
 
 function render() {
   const root = ReactDOM.createRoot(document.getElementById("app"));
@@ -37,4 +47,3 @@ function render() {
 }
 
 render();
-

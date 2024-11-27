@@ -1,1 +1,3 @@
-export class CreateTermOfConditionDto {}
+export class CreateTermOfConditionDto {
+  pdfLink: string;
+}

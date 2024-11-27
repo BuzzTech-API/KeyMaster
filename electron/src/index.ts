@@ -16,6 +16,7 @@ const createWindow = (): void => {
     height: 600,
     width: 800,
     webPreferences: {
+      allowRunningInsecureContent: true,
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
     show: false
@@ -34,7 +35,7 @@ const createWindow = (): void => {
         responseHeaders: {
             ...details.responseHeaders,
             'Content-Security-Policy': [
-                "default-src 'self' 'unsafe-inline' 'unsafe-eval' data:; connect-src 'self' http://localhost:8000;",
+              "*"
             ],
         },
     });
@@ -44,6 +45,7 @@ const createWindow = (): void => {
   // mainWindow.webContents.openDevTools();
 };
 
+                //"default-src 'self' 'unsafe-inline' 'unsafe-eval' data:; connect-src 'self' http://localhost:8000;",
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.

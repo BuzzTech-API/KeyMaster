@@ -1,3 +1,4 @@
+import { BACKEND_URL } from '../constants';
 import { UpdateUserDto } from '../interfaces/user.interface'
 
 
@@ -5,7 +6,7 @@ import { UpdateUserDto } from '../interfaces/user.interface'
 export async function updateUser(userData: UpdateUserDto, id: number): Promise<{ success: boolean; message?: string }> {
 
     try {
-        const response = await fetch(`http://localhost:8000/user/${String(id)}`, {
+        const response = await fetch(BACKEND_URL +`user/${String(id)}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',

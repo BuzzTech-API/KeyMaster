@@ -1,11 +1,10 @@
+import { Password } from 'src/password/entities/password.entity';
+import { UserHasConsent } from 'src/user_has_consent/entities/user_has_consent.entity';
 import { Session } from '../../session/entities/session.entity';
-import { Password } from "src/password/entities/password.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-
 
 @Entity()
 export class User {
-
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -17,17 +16,20 @@ export class User {
     email: string;
 
     @Column()
-    name: string
+    name: string;
 
     @Column()
-    password: string
+    password: string;
 
     //Chave para o usuário descriptografar suas senhas. 
     @Column()
     userKey: string
 
-    @OneToMany(() => Password, (password) => password.user, { onDelete: 'CASCADE'})
+    @OneToMany(() => Password, (password) => password.user,{ cascade: ['remove'] })
     passwords: Password[];
+
+    @OneToMany(() => UserHasConsent, (uhc) => uhc.user)
+    consent: UserHasConsent[];
 
     @OneToMany(() => Session, session => session.user, { cascade: true }) // Relacionamento com Session
     sessions: Session[];

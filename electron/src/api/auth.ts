@@ -21,6 +21,9 @@ export async function login(email: string, password: string): Promise<LoginRespo
   
       if (response.ok) {
         console.log('Login bem-sucedido');
+        const data = await response.json();
+        console.log(data)
+        localStorage.setItem('isSuperUser', data.isSuperUser ? 'true': 'false')
         return { success: true };
       } else {
         const data = await response.json();

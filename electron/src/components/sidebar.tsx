@@ -1,50 +1,89 @@
 import React, { useEffect, useState } from 'react';
 import { logout } from '../api/logout'; // Ivan Germano: Importa Rota de Logout.
 import { useUser } from '../context/UserContext';
+import { useTerms } from '../context/TermsContext';
 
-const Sidebar: React.FC<{ setActiveScreen: (screen: string) => void }> = ({ setActiveScreen }) => {
+const Sidebar: React.FC<{ setActiveScreen: (screen: string) => void }> = ({
+  setActiveScreen,
+}) => {
 
-    //chamando o User >:)
-    const {user} = useUser()
+  //chamando o User >:)
+  const {user, setUser} = useUser()
 
-    const handleLogout = async () => {
-      // Ivan Germano: Aqui chamamos a função de logout da API
-      await logout();
-
-      // Ivan Germano: Aqui vamos redirecionar para a tela de login
-      setActiveScreen('login');
-    };
-
-    return (
-      <div className="z-10 fixed w-56 bg-gray-800 text-white h-screen flex flex-col items">
-        {/*Ivan Germano: Componente para mostrar qual usuário está logado */}
-        {user && (
-          <div className="p-4 bg-gray-300 text-black font-bold text-center">
-            <p>Usuário: {user.name}</p>
-            <p>Id: {user.id}</p>
-          </div>
-        )}
-        <button className="border-2 p-4 hover:bg-gray-700" onClick={() => setActiveScreen('home')}>
-          Home
-        </button>
-        <button className="border-2 p-4 hover:bg-gray-700" onClick={() => setActiveScreen('savedPasswords')}>
-          Saved Passwords
-        </button>
-
-
-        <div className="mt-auto">
-        <button className="border-2 p-4 hover:bg-gray-700 w-full" onClick={() => setActiveScreen('userProfile')}>
-          User Profile
-        </button>
-          <button
-            className="p-4 bg-red-700 hover:bg-red-500 w-full"
-            onClick={handleLogout}
-            >
-            Logout
-          </button>
-        </div>
-      </div>
-    );
+  const handleLogout = async () => {
+    setUser(null)
+    // Ivan Germano: Aqui chamamos a função de logout da API
+    await logout();
+    // Ivan Germano: Aqui vamos redirecionar para a tela de login
+    setActiveScreen('login');
   };
+  const {allConsentsValid, hasUnacceptedMandatory, termOfConditions }= useTerms()
 
-export default Sidebar
+   if((!allConsentsValid || hasUnacceptedMandatory)&& termOfConditions !== null){
+    return(
+      <></>
+    )
+
+  }else{
+    if(user){
+
+      return (
+        <div className="z-10 fixed w-56 bg-gray-800 text-white h-screen flex flex-col items">
+          {/*Ivan Germano: Componente para mostrar qual usuário está logado */}
+          {user && (
+            <div className="p-4 bg-gray-300 text-black font-bold text-center">
+              <p>Usuário: {user.name}</p>
+              <p>Id: {user.id}</p>
+            </div>
+          )}
+          <button
+            className="p-4 hover:bg-gray-700"
+            onClick={() => setActiveScreen("home")}
+          >
+            Home
+          </button>
+          <button
+            className="p-4 hover:bg-gray-700"
+            onClick={() => setActiveScreen("savedPasswords")}
+          >
+            Saved Passwords
+          </button>
+          {user !== undefined && user.isSuperUser && (
+            <button
+              className="p-4 hover:bg-gray-700"
+              onClick={() => setActiveScreen("signupSu")}
+            >
+              Criar Usuário
+            </button>
+          )}
+          { user && user.isSuperUser &&
+            <button
+              className="p-4 hover:bg-gray-700"
+              onClick={() => setActiveScreen("cadastrarTermo")}
+            >
+              Cadastrar Termo de Condições
+            </button>
+          }
+          <div className="mt-auto">
+            <button className="border-2 p-4 hover:bg-gray-700 w-full" onClick={() => setActiveScreen('userProfile')}>
+              User Profile
+            </button>
+            <button
+              className="p-4 bg-red-700 hover:bg-red-500 w-full"
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
+          </div>
+
+
+        </div>
+      );
+    }
+    else{
+      return(<></>);
+    }
+  }
+};
+
+export default Sidebar;

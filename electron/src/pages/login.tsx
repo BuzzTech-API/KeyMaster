@@ -4,11 +4,11 @@ import { useUser } from '../context/UserContext';
 import { getCurrentUser } from '../api/getCurrentUser';
 
 interface LoginProps {
-  onLoginSuccess: () => void; // Callback prop
+  setActiveScreen: React.Dispatch<React.SetStateAction<string>>; // Callback prop
 }
 
 
-const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
+const Login: React.FC<LoginProps> = ({ setActiveScreen }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -18,9 +18,9 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
     e.preventDefault();
     // Ivan Germano: Aqui vamos usar a função Fetch chamada 'login' para enviar o email e senha ao backend, 
     // preferi separar para deixar mais limpo o código.
-    console.log('Enviando dados para login:', { email, password });
+    //console.log('Enviando dados para login:', { email, password });
     const result = await login(email, password); // Usando a função de login da API
-    console.log('Resultado do login:', result);
+    //console.log('Resultado do login:', result);
 
     if (result.success) {
       //atualiza o context com o usuário atual da sessão
@@ -30,8 +30,8 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
         setUser(currentUser.user);
 
       }
+      setActiveScreen('home')
 
-      onLoginSuccess();
     } else {
       setErrorMessage(result.message || 'Login falhou!');
     }
@@ -73,6 +73,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
           <button
             type="submit"
             className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition duration-300"
+            onClick={handleSubmit}
           >
             Login
           </button>
@@ -84,7 +85,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
         )}
         {/* Option to Register */}
         <p className="text-gray-400 mt-6 text-center">
-          Don’t have an account? <a href="#" className="text-blue-500 hover:underline">Sign up</a>
+          Don’t have an account? <a href="#" onClick={()=>setActiveScreen('signup')} className="text-blue-500 hover:underline">Sign up</a>
         </p>
       </div>
     </div>

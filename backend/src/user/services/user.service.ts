@@ -6,6 +6,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entities/user.entity';
 import { Repository } from 'typeorm';
 import { EncryptionService } from './encryption.service';
+import { GetUserDTO } from '../dto/get-user.dto';
+import { UserHasConsent } from 'src/user_has_consent/entities/user_has_consent.entity';
 import { SessionService } from '../../session/services/session.service'; // Ivan Germano: Importando o serviço de sessão
 import * as crypto from 'crypto';
 import { PasswordEncryptionService } from 'src/password/services/passwordEncryption.service';
@@ -17,23 +19,39 @@ import { userInfo } from 'os';
 
 @Injectable()
 export class UserService {
-
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+
+    @InjectRepository(UserHasConsent)
+    private readonly userHasConsentRepository: Repository<UserHasConsent>,
+
     // Ivan Germano: Aqui estamos injetando nosso serviço de criptografia em UserService.
     private readonly encryptionService: EncryptionService,
+
     // Ivan Germano: Aqui estamos injetando nosso serviço de sessão em UserService.
     private readonly sessionService: SessionService,
+
     // Lemon: Aqui estamos injetando nosso serviço de critografia em PasswordService
     private readonly passwordEncryptionService: PasswordEncryptionService,
+
     // Ivan Germano: Aqui estamos injetando o serviço de blacklisting em UserService.
     private readonly blacklistService: BlacklistService, // Injetar o BlacklistService para registrar o usuário excluído
-  ){}
+  ) { }
+
+  async getConsentimentosPorUsuario(usuarioId: number) {
+    return this.userHasConsentRepository.find({
+      where: { user_id: usuarioId },
+      relations: ['consent'],
+    });
+  }
+
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     // Ivan Germano: Aqui definimos a variavel 'hashedPassword para usar o serviço de criptografia com a função 'hashedPassword'.
-    const hashedPassword = await this.encryptionService.hashPassword(createUserDto.password);
+    const hashedPassword = await this.encryptionService.hashPassword(
+      createUserDto.password,
+    );
     createUserDto.password = hashedPassword;
 
     //gera uma string aleatoria de 64 caracteres
@@ -47,17 +65,15 @@ export class UserService {
   }
 
   async findAll(): Promise<User[]> {
-    return await this.userRepository.find()
+    return await this.userRepository.find();
   }
 
   async findOne(id: number): Promise<User> {
-    const userData = await this.userRepository.findOneBy({id})
+    const userData = await this.userRepository.findOneBy({ id });
     if (!userData) {
-      throw new HttpException(
-        'User not found!', 404
-      )
+      throw new HttpException('User not found!', 404);
     }
-    return userData
+    return userData;
   }
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
@@ -100,6 +116,7 @@ export class UserService {
       await this.blacklistService.addUserToBlacklist(userId);
  
       // console.log(`Usuário ${userId}, removido com sucesso`);
+
     } catch (error) {
       console.error('Erro ao excluir o usuário:', error.message);
       throw new HttpException('Erro ao excluir o usuário', 500);
@@ -223,6 +240,13 @@ export class UserService {
     }
   }
 
+
+  async remove(id: number): Promise<User> {
+    const user = await this.findOne(id);
+    return await this.userRepository.remove(user)
+  }
+
+
   // Ivan Germano: Função de login para verificar as credenciais do usuário e criar uma sessão.
   async login(loginUserDto: LoginUserDto): Promise<{ user: User; sessionToken: string }> {
     const { email, password } = loginUserDto;
@@ -237,10 +261,11 @@ export class UserService {
     }
 
     // Ivan Germano: Aqui verifica se a senha corresponde a criptografia.
+
     const isPasswordValid = await this.encryptionService.comparePasswords(password, user.password);
     Logger.log('login', `Senha válida?, ${isPasswordValid}`); // Verificar validação de senha
     if (!isPasswordValid) {
-      console.log("Senha INCORRETA!");
+      console.log('Senha INCORRETA!');
       throw new HttpException('Senha INCORRETA!', 401);
     }
     // Ivan Germano: Retorna o usuário em caso de sucesso
@@ -254,5 +279,6 @@ export class UserService {
 
   async logout(sessionToken: string): Promise<void> {
     await this.sessionService.invalidateSession(sessionToken);
+
   }
 }

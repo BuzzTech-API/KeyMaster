@@ -4,6 +4,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { User } from './entities/user.entity';
+import { GetUserDTO } from './dto/get-user.dto';
 import { Request, Response } from 'express';
 import { Logger } from '../utils/Logger';
 import { SessionService } from '../session/services/session.service';
@@ -65,6 +66,11 @@ export class UserController {
   @Get()
   findAll() {
     return this.userService.findAll();
+  }
+
+@Get('user-has-consent/:id')
+  getUserHasConsents(@Param('id') id: string) {
+    return this.userService.getConsentimentosPorUsuario(+id);
   }
 
   @Get(':id')
