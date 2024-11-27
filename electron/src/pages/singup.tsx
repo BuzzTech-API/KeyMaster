@@ -29,7 +29,9 @@ const Signup: React.FC<Signpprops> = ({
   const [conditions, setConditions] = useState<Condition[]>()
   useEffect(()=>{
     (async () => {
-      const getTerms = await GetTermOfConditions()
+      const requestTerm = await GetTermOfConditions()
+      try {
+      const getTerms = await requestTerm.json()
       const newTerm = new TermOfConditions()
       newTerm.id = getTerms.id
       newTerm.isValid = getTerms.isValid
@@ -40,6 +42,9 @@ const Signup: React.FC<Signpprops> = ({
         return new Condition(consent)
       }))
       setTermOfConditions(newTerm)
+      } catch (error) {
+
+      }
     })();
 
   },[])

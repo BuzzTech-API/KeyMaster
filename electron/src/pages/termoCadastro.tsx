@@ -5,9 +5,12 @@ import { ModalCreateConsent } from "../components/ModalCreateConsent";
 import CreateTermOfConditions from "../api/term-of-conditions";
 import CreateConsent from "../api/consent";
 import { useTerms } from "../context/TermsContext";
+import { logout } from "../api/logout";
 
-type props = {};
-export default function CadastroTermo({ }: props) {
+type props = {
+  setActiveScreen: React.Dispatch<React.SetStateAction<string>>; // Callback prop
+};
+export default function CadastroTermo({ setActiveScreen }: props) {
   const [pdfLink, setPdfLink] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [consentimentos, setConsentimentos] = useState<Array<Consentimento>>(
@@ -31,6 +34,10 @@ export default function CadastroTermo({ }: props) {
         }),
       );
       await revalidateTerms()
+      await logout()
+      
+      setActiveScreen("login")
+      
     }
 
     // NOTE: Configurar a criação dos checkbox para o usuário
@@ -38,7 +45,7 @@ export default function CadastroTermo({ }: props) {
 
   return (
     <div className="w-screen min-h-screen flex items-center justify-center bg-gray-900">
-      <div className="bg-gray-800 p-8 rounded-lg shadow-lg max-w-md w-full">
+      <div className="bg-gray-800 p-8 rounded-lg shadow-lg max-w-full w-md">
         <h2 className="text-3xl font-bold text-white text-center mb-8">
           Cadastrar Termo
         </h2>

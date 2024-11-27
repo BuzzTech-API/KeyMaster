@@ -13,7 +13,7 @@ import { TermProvider } from './context/TermsContext';
 
 
 const App = () => {
-  const [activeScreen, setActiveScreen] = useState("login");
+  const [activeScreen, setActiveScreen] = useState("cadastrarTermo");
 
 
   return (
@@ -30,7 +30,7 @@ const App = () => {
             <Signup setActiveScreen={setActiveScreen} />
           )}
           {activeScreen === "cadastrarTermo" && (
-            <CadastroTermo />
+            <CadastroTermo setActiveScreen={setActiveScreen} />
           )}
           {activeScreen === "signupSu" && (
             <Signup setActiveScreen={setActiveScreen} isSuperUser />

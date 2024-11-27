@@ -12,6 +12,24 @@ import TermsAndCondition from "../components/termsAndCondition";
 import { updateUserHasConsent } from "../api/user_has_consent";
 import { logout } from "../api/logout";
 
+
+const getChangedConditions = (
+  oldConditions: Condition[],
+  currentConditions: Condition[]
+): Condition[] => {
+  // Verifica alterações nos valores de 'checked'
+  return currentConditions.filter((currentCondition) => {
+    const oldCondition = oldConditions.find(
+      (old) => old.consentimento.id === currentCondition.consentimento.id
+    );
+
+    // Se encontrou a condição antiga, verifica se o 'checked' mudou
+    return oldCondition && oldCondition.checked !== currentCondition.checked;
+  });
+};
+
+
+
 interface UserProfileProps {
   setActiveScreen: (screen: string) => void;
 }
@@ -23,6 +41,8 @@ const UserProfile: React.FC<{setActiveScreen: (screen: string) => void}> = ({ se
 
   // Pega os consentimento do usuario e os Termos Atuais
   const { termOfConditions, userHasConsent } = useTerms()
+  if (termOfConditions && userHasConsent ) {
+    
 
   // State do modal do PDF do Termo
   const [isOpen, setIsOpen] = useState(false);
@@ -38,6 +58,17 @@ const UserProfile: React.FC<{setActiveScreen: (screen: string) => void}> = ({ se
       newCondition.checked = userConsent.isAccept;
       return newCondition;
     }))
+  const [oldConditions, setOldConditions] = useState<Condition[]>(userHasConsent.filter((userConsent) =>
+    termOfConditions.consents.some(
+      (termConsent) => termConsent.id === userConsent.consent_id
+    )
+  )
+    .map((userConsent) => {
+      const newCondition = new Condition(userConsent.consent);
+      newCondition.checked = userConsent.isAccept;
+      return newCondition;
+    }))
+
 
   const [userDetails, setUserDetails] = useState({
     id: user.id,
@@ -65,7 +96,7 @@ const UserProfile: React.FC<{setActiveScreen: (screen: string) => void}> = ({ se
       delete updatedUserDetails.password;
     }
 
-    const requestUpdate = conditions.map((condition)=>{
+    const requestUpdate = getChangedConditions(oldConditions,conditions ).map((condition)=>{
       if(condition.consentimento.isOptional){
         return updateUserHasConsent(user.id, condition.consentimento.id, condition.checked) 
       }
@@ -254,6 +285,7 @@ const UserProfile: React.FC<{setActiveScreen: (screen: string) => void}> = ({ se
       </button>
     </div>
   );
+  }
 }
 
 export default UserProfile

@@ -94,7 +94,7 @@ export const ModalCreateConsent: React.FC<Props> = ({
                 isOptional: checked,
               });
             }}
-            children={consentData.isOptional ? "Opcional" : "Obrigatório"}
+            children={"Opicional"}
           />
         </div>
       </Modal>

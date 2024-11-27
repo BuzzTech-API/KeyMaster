@@ -19,7 +19,7 @@ async function bootstrap() {
 
   app.enableCors({
     origin: true, // Ivan Germano: Duas origens que julgei necessárias para CORS
-    methods: 'GET,POST,PUT,DELETE', // Permitir apenas esses métodos HTTP
+    methods: 'GET,POST,PATCH,PUT,DELETE', // Permitir apenas esses métodos HTTP
     credentials: true, // Permitir envio de cookies/sessões
   });
   // Ivan Germano: Aqui estamos habilitando a validação global, isso garante que sempre que um modulo utilizar um dto ele tem que
