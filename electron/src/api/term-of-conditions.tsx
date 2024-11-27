@@ -26,7 +26,7 @@ export async function GetTermOfConditions() {
       method: "get",
     });
 
-    return request.json();
+    return request
   } catch (error) {
     console.error(error);
   }

@@ -17,9 +17,9 @@ const Sidebar: React.FC<{ setActiveScreen: (screen: string) => void }> = ({
     // Ivan Germano: Aqui vamos redirecionar para a tela de login
     setActiveScreen('login');
   };
-  const {allConsentsValid, hasUnacceptedMandatory }= useTerms()
+  const {allConsentsValid, hasUnacceptedMandatory, termOfConditions }= useTerms()
 
-  if(!allConsentsValid || hasUnacceptedMandatory){
+   if((!allConsentsValid || hasUnacceptedMandatory)&& termOfConditions !== null){
     return(
       <></>
     )

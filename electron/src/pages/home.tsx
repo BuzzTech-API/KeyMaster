@@ -7,7 +7,7 @@ import { TermOfConditions } from "../types/termOfConditions";
 const Home: React.FC = () => {
   const {allConsentsValid, hasUnacceptedMandatory, termOfConditions }= useTerms()
 
-   if(!allConsentsValid || hasUnacceptedMandatory){
+   if((!allConsentsValid || hasUnacceptedMandatory)&& termOfConditions !== null){
     return(
     <AcceptNewTerms termOfConditions={termOfConditions ? termOfConditions : new TermOfConditions()} />
     )

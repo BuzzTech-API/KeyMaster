@@ -25,25 +25,31 @@ export const TermProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Função para buscar e validar os termos e consentimentos
   const fetchAndValidateTerms = async () => {
-    const getTerms = await GetTermOfConditions();
-    console.log(getTerms)
-    const newTerm = new TermOfConditions();
-    newTerm.id = getTerms.id;
-    newTerm.isValid = getTerms.isValid;
-    newTerm.pdfLink = getTerms.pdfLink;
-    newTerm.aplicationDate = getTerms.aplicationDate;
-    newTerm.consents = getTerms.consent;
+    try {
+      const response = await GetTermOfConditions()
 
-    setTermOfConditions(newTerm);
+      const getTerms = await response.json()
+      console.log(getTerms)
+      const newTerm = new TermOfConditions();
+      newTerm.id = getTerms.id;
+      newTerm.isValid = getTerms.isValid;
+      newTerm.pdfLink = getTerms.pdfLink;
+      newTerm.aplicationDate = getTerms.aplicationDate;
+      newTerm.consents = getTerms.consent;
 
-    if (user) {
-      const userHasConsentResponse = await getUserHasConsent(user.id);
-      const userHasConsent: UserConsent[] = await userHasConsentResponse.json();
-      setUserHasConsent(userHasConsent)
+      setTermOfConditions(newTerm);
 
-      const validate = validateUserConsent(userHasConsent, newTerm);
-      setAllConsentsValid(validate.allConsentsValid);
-      setHasUnacceptedMandatory(validate.hasUnacceptedMandatory);
+      if (user) {
+        const userHasConsentResponse = await getUserHasConsent(user.id);
+        const userHasConsent: UserConsent[] = await userHasConsentResponse.json();
+        setUserHasConsent(userHasConsent)
+
+        const validate = validateUserConsent(userHasConsent, newTerm);
+        setAllConsentsValid(validate.allConsentsValid);
+        setHasUnacceptedMandatory(validate.hasUnacceptedMandatory);
+      }
+    } catch (error) {
+      console.error(error)
     }
   };
 
